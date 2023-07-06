@@ -1,0 +1,91 @@
+extends ../layout
+
+block content
+  .page-header
+    h3.text-center Create An Apartment Listing
+    hr
+
+  form.form-horizontal(action='/account/list-apartment', method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='apartmentNumber') Apartment number
+      .col-sm-7
+        input.form-control(type='apartmentNumber', name='apartmentNumber', id='apartmentNumber', value=apartment.apartmentNumber)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='numBedrooms') Number of bedrooms
+      .col-sm-7
+        input.form-control(type='numBedrooms', name='numBedrooms', id='numBedrooms', value=apartment.numBedrooms)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='numBathrooms') Number of bathrooms
+      .col-sm-7
+        input.form-control(type='numBathrooms', name='numBathrooms', id='numBathrooms', value=apartment.numBathrooms)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='photosFolder') Photos link (ex. Google Drive folder)*
+      .col-sm-7
+        input.form-control(type='photosFolder', name='photosFolder', id='photosFolder', value=apartment.photosFolder)
+    .form-group.row.justify-content-center
+      p 
+        b * For photo sharing, please read the instructions at: 
+          a(href='https://tinyurl.com/ra9kxgs') https://tinyurl.com/ra9kxgs 
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='additionalInformation') Additional information (contact information, additional fees, etc)
+      .col-sm-7
+        textarea.form-control(type='additionalInformation', name='additionalInformation', id='additionalInformation', style='min-width: 100%', rows='5', value=apartment.additionalInformation)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='januaryPrice') January's rent
+      .col-sm-7
+        input.form-control(type='januaryPrice', name='januaryPrice', id='januaryPrice', value=apartment.januaryPrice)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='februaryPrice') February's rent
+      .col-sm-7
+        input.form-control(type='februaryPrice', name='februaryPrice', id='februaryPrice', value=apartment.februaryPrice)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='marchPrice') March's rent
+      .col-sm-7
+        input.form-control(type='marchPrice', name='marchPrice', id='marchPrice', value=apartment.marchPrice)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='aprilPrice') April's rent
+      .col-sm-7
+        input.form-control(type='aprilPrice', name='aprilPrice', id='aprilPrice', value=apartment.aprilPrice)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='mayPrice') May's rent
+      .col-sm-7
+        input.form-control(type='mayPrice', name='mayPrice', id='mayPrice', value=apartment.mayPrice)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='junePrice') June's rent
+      .col-sm-7
+        input.form-control(type='junePrice', name='junePrice', id='junePrice', value=apartment.junePrice)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='julyPrice') July's rent
+      .col-sm-7
+        input.form-control(type='julyPrice', name='julyPrice', id='julyPrice', value=apartment.julyPrice)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='augustPrice') August's rent
+      .col-sm-7
+        input.form-control(type='augustPrice', name='augustPrice', id='augustPrice', value=apartment.augustPrice)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='septemberPrice') September's rent
+      .col-sm-7
+        input.form-control(type='septemberPrice', name='septemberPrice', id='septemberPrice', value=apartment.septemberPrice)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='octoberPrice') October's rent
+      .col-sm-7
+        input.form-control(type='octoberPrice', name='octoberPrice', id='octoberPrice', value=apartment.octoberPrice)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='novemberPrice') November's rent
+      .col-sm-7
+        input.form-control(type='novemberPrice', name='novemberPrice', id='novemberPrice', value=apartment.novemberPrice)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='decemberPrice') December's rent
+      .col-sm-7
+        input.form-control(type='decemberPrice', name='decemberPrice', id='decemberPrice', value=apartment.decemberPrice)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='forSalePrice') For sale price. Note that a price of 0 means not for sale
+      .col-sm-7
+        input.form-control(type='forSalePrice', name='forSalePrice', id='forSalePrice', value=apartment.forSalePrice)
+
+    .form-group.row.justify-content-center
+      .col-sm-4
+        button.btn.btn.btn-primary(type='submit')
+          i.fa.fa-pencil
+          | Create Listing

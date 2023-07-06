@@ -1,0 +1,48 @@
+doctype html
+html(lang='')
+  head
+    // Global site tag (gtag.js) - Google Analytics
+    script(async='', src='https://www.googletagmanager.com/gtag/js?id=UA-155123618-1')
+    script.
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-155123618-1');
+    // End of Google Analytics
+
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title Sea Air Towers Vacation Apartment Rentals
+    meta(name='description', content='Rent or buy a Sea Air Towers vacation rental apartment in Hollywood, Florida.')
+    meta(name='keywords', content='Sea Air Towers, Rent Sea Air Towers, Buy Sea Air Towers, Buy Sea Air Towers Condo, Sea Air Towers Apartments, Buy Sea Air Towers Apartment, Sea Air Towers Rentals, Rent Sea Air Towers Condo, Rent Sea Air Towers Condominium, Rent Sea Air Towers Apartment, Sea Air Towers For Rent, Real Estate, Condominium, Apartment, Rental, Rentals, Vacation Rental, Hollywood Florida Vacation Rental, Hollywood Beach Vacation Rentals, Hollywood Beach Rental, Hollywood Beach Apartments')
+    meta(name='theme-color' content='#4DA5F4')
+    meta(name='csrf-token', content=_csrf)
+    // link(rel='shortcut icon', href='/images/favicon.png') // Replacing the default favicon with custom sunset.
+    link(rel='apple-touch-icon' sizes='180x180' href='/images/apple-touch-icon.png')
+    link(rel='icon' type='image/png' sizes='32x32' href='/images/favicon-32x32.png')
+    link(rel='icon' type='image/png' sizes='16x16' href='/images/favicon-16x16.png')
+    link(rel='manifest' href='/images/site.webmanifest')
+    // End of favicon which was generated from https://favicon.io/favicon-converter/
+    link(rel='stylesheet', href='/css/main.css')
+
+  body
+    include partials/header
+
+    .container.pl-sm-0.pr-sm-0.pl-lg-3.pr-lg-3
+      include partials/flash
+      block content
+
+    include partials/footer
+
+    script(src='/js/lib/jquery-3.1.1.min.js')
+    script(src='/js/lib/bootstrap.min.js')
+    script(async defer src="https://buttons.github.io/buttons.js")
+    script(src='/js/main.js')
+
+    // Note: I am commenting this out because I am doing Google Analytics the newer way, this is just left over from the seed app.
+    //- Google Analytics: change UA-38177297-2 to be your site's ID
+    // script.
+    //   window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+    //   ga('create','UA-38177297-2','auto');ga('send','pageview')
+    // script(src='https://www.google-analytics.com/analytics.js' async defer)

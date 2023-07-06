@@ -1,0 +1,38 @@
+extends ../layout
+
+block content
+
+  - var todaysDateObject = new Date();
+  - var todaysDateString = todaysDateObject.toLocaleDateString();
+  - var nextDateObjectNew = new Date(todaysDateObject.valueOf());
+  - nextDateObjectNew.setDate(nextDateObjectNew.getDate() + 5);
+  - var nextDateString = nextDateObjectNew.toLocaleDateString();
+  - var dateRange = todaysDateString + " - " + nextDateString
+
+  .page-header
+    h3.text-center #{title}
+    hr
+
+  form.form-horizontal(action='/account/update-availability/' + apartmentNumber, method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='dateRange') Book Date Range
+      .col-sm-7
+        input.form-control(type='dateRange', name='dateRange', id='dateRange', value=dateRange)
+    .form-group.row.justify-content-center
+      .col-sm-4
+        button.btn.btn.btn-primary(type='submit')
+          i.fa.fa-pencil
+          | Book Dates
+
+  form.form-horizontal(action='/account/unupdate-availability/' + apartmentNumber, method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='dateRange2') Unbook Date Range
+      .col-sm-7
+        input.form-control(type='dateRange2', name='dateRange2', id='dateRange2', value=dateRange)
+    .form-group.row.justify-content-center
+      .col-sm-4
+        button.btn.btn.btn-primary(type='submit')
+          i.fa.fa-pencil
+          | Unbook Dates

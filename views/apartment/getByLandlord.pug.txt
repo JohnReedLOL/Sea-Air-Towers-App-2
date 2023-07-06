@@ -1,0 +1,18 @@
+extends ../layout
+//- This is no longer used - just do /search-for-apartments
+block content
+  .page-header
+    h3.text-center Get Apartments By Landlord
+    hr
+
+  form.form-horizontal(action='/rent-apartment-by-landlord', method='GET')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='landlord') Landlord's email address
+      .col-sm-7
+        input.form-control(type='landlord', name='landlord', id='landlord', value='')
+    .form-group.row.justify-content-center
+      .col-sm-4
+        button.btn.btn.btn-primary(type='submit')
+          i.fa.fa-pencil
+          | Get Apartments

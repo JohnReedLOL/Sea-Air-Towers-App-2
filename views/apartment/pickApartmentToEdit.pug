@@ -1,0 +1,12 @@
+extends ../layout
+
+block content
+  .page-header
+    h3.text-center #{title}
+    hr
+
+  .row.justify-content-center
+    ul
+      each apartment in apartments
+          li
+              a(href="/account/update-listing/" + apartment.apartmentNumber) Apartment #{apartment.apartmentNumber}

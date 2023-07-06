@@ -11,7 +11,9 @@ if (fs.existsSync(".env")) {
 }
 // export const ENVIRONMENT = process.env.NODE_ENV;
 // const prod = ENVIRONMENT === "production"; // Anything else is treated as 'dev'
-const prod = false;
+
+// Don't need this variable anymore now that the stuff at the bottom is commented out.
+// const prod = false;
 
 export const SESSION_SECRET = process.env["SESSION_SECRET"];
 
@@ -23,7 +25,15 @@ if (!SESSION_SECRET) {
     logger.error("No client secret. Set SESSION_SECRET environment variable.");
     process.exit(1);
 }
-/* Edit: there is no local MongoDB ever and prod is always false. */
+
+/* Note: there is no local MongoDB ever. Only remote. */
+if (!MONGODB_URI) {
+    logger.error("No mongo connection string. Set MONGODB_URI environment variable.");
+    process.exit(1);
+}
+
+// Commenting this shit out:
+/*
 if (!MONGODB_URI) {
     if (prod) {
         logger.error("No mongo connection string. Set MONGODB_URI environment variable.");
@@ -31,6 +41,7 @@ if (!MONGODB_URI) {
         process.exit(2);
     } else {
         logger.error("No mongo connection string. Set MONGODB_URI_LOCAL environment variable.");
+        process.exit(1);
     }
-    process.exit(1);
 }
+*/

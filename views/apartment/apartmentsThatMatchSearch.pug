@@ -1,0 +1,23 @@
+extends ../layout
+
+block content
+  .page-header
+    h3.text-center #{title}
+    hr
+
+  - let hasAsterisk = false;
+
+  .row.justify-content-center
+    ul
+      each myApartment in myApartments
+          li
+              - const mayBePenthouse = (myApartment.apartmentNumber < 28);
+              - let optionalAsterisk = "";
+              - if(mayBePenthouse) { optionalAsterisk = "*"; hasAsterisk = true; };
+              - let suffixText = "";
+              - if(myApartment.forSalePrice != null && myApartment.forSalePrice != undefined && myApartment.forSalePrice != 0) { suffixText = "For sale for $" + myApartment.forSalePrice;};
+              a(href="/apartment/" + myApartment.apartmentNumber) Apartment #{myApartment.apartmentNumber}
+              | #{optionalAsterisk} #{suffixText}
+
+    if hasAsterisk
+      p * Note that apartment numbers less than 28 may be penthouses and apartment numbers less than 13 may be on the ground floor. Check with the landlord.

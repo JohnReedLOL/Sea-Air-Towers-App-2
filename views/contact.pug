@@ -1,0 +1,33 @@
+extends layout
+
+block content
+  .page-header
+    h3.text-center #{title}
+    hr
+    p Note: There is a known user interface bug where the unexpanded drop-down menu (navigation bar) hangs over the title of a given page in this site, covering some of the title. For me this happens when my font size is set to large in my phone's settings.
+    p Also, there was a known bug where when you try to sign in, the sign in might not work the first time even if you put in the right password. It just redirects you to the homepage without actually signing you in. Just try signing in again using the same password. You might have to try it twice. This bug can occur after creating a new account as well.
+    p If you have any other issues, please email me, the developer, at JohnMichaelReedFAS AT Gmail DOT com . Replace AT with an @ and DOT with a .
+
+//-
+  Note: Since the original email sender stopped working, I am having people email me with their issues with this site instead of using a contact form. The contact form has been commented out.
+
+//-
+  form.form-horizontal(method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group.row.justify-content-md-center
+      label.col-sm-2.col-form-label.text-right.font-weight-bold(for='name') Name
+      .col-sm-8
+        input.form-control(type='text', name='name', id='name', autofocus=true)
+    .form-group.row.justify-content-md-center
+      label.col-sm-2.col-form-label.text-right.font-weight-bold(for='email') Email
+      .col-sm-8
+        input.form-control(type='text', name='email', id='email')
+    .form-group.row.justify-content-md-center
+      label.col-sm-2.col-form-label.text-right.font-weight-bold(for='message') Body
+      .col-sm-8
+        textarea.form-control(name='message', id='message', rows='7')
+    .form-group.row.justify-content-md-center
+      .offset-sm-2.col-sm-8
+        button.btn.btn-primary(type='submit')
+          i.fa.fa-envelope
+          | Send

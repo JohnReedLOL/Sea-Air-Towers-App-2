@@ -1,0 +1,61 @@
+extends layout
+
+block content
+  h1.text-center Sea Air Towers Vacation Rentals or Sales
+  p.lead.text-center Save 5-10% off VRBO prices by renting or buying directly from landlords of Sea Air Towers
+  p.lead.text-center (30 day minimum)
+  hr
+  .row
+    .col
+      h2.text-center 
+        u
+          a(href='/search-for-apartments', style='color:black;') Search
+      p.text-center 
+        a(href="/search-for-apartments") Search for apartments by number of bedrooms, number of bathrooms, and dates of availability.
+
+  .row
+    .col-sm-6
+      h2.text-center 
+        u
+          a(href='/account/list-apartment', style='color:black;') List
+      p.text-center 
+        a(href="/account/list-apartment") Landlords, list your apartment [sign in required].
+
+    .col-sm-6
+      h2.text-center 
+        u
+          a(href='/account/update-listing', style='color:black;') Update Listing
+      p.text-center 
+        a(href="/account/update-listing") Landlords, update your apartment or its availability [sign in required].
+  hr
+  .row.justify-content-center
+    //- Added style to give images a fixed width //
+    #carouselExampleControls.carousel.slide(data-ride='carousel' style='height: auto; width: 886px !important;')
+      .carousel-inner
+        .carousel-item.active
+          img.d-block.w-100(src='https://i.ibb.co/YfPnCN5/IMG-1783.jpg' alt='Image 1 of Sea Air Towers condominium')
+        .carousel-item
+          img.d-block.w-100(src='https://i.ibb.co/18sw0V6/IMG-1813.jpg' alt='Image 2 of Sea Air Towers condominium')
+        .carousel-item
+          img.d-block.w-100(src='https://i.ibb.co/7WjGTtd/7-25.jpg' alt='Image 3 of Sea Air Towers condominium')
+        .carousel-item
+          img.d-block.w-100(src='https://i.ibb.co/VJypBy1/7-25-1.jpg' alt='Image 4 of Sea Air Towers condominium')
+        .carousel-item
+          img.d-block.w-100(src='https://i.ibb.co/zSWxjFP/IMG-6137-1.jpg' alt='Image 5 of Sea Air Towers condominium')
+        .carousel-item
+          img.d-block.w-100(src='https://i.ibb.co/J5cqdxp/z.jpg' alt='Image 6 of Sea Air Towers condominium')
+      a.carousel-control-prev(href='#carouselExampleControls' role='button' data-slide='prev')
+        span.carousel-control-prev-icon(aria-hidden='true')
+        span.sr-only Previous
+      a.carousel-control-next(href='#carouselExampleControls' role='button' data-slide='next')
+        span.carousel-control-next-icon(aria-hidden='true')
+        span.sr-only Next
+
+  hr
+  h2.text-center 
+    u Location
+    //- I added the CSS on this <br> following the instructions at https://stackoverflow.com/a/1409742 in order to create a small space between the word "Location" and the Google Map. Note that this is probably not the right way to do this, but I am not a frontend specialist and this works.
+    br(style='display:block; margin: 5px 0;')
+    .row.justify-content-center
+      iframe(src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3586.333470043927!2d-80.12038088601203!3d25.989891505463074!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88d9ab5e5a4e20a9%3A0xc9b1f1231a79bbd9!2sSea%20Air%20Towers!5e0!3m2!1sen!2sus!4v1578549406853!5m2!1sen!2sus' width='886' height='487' frameborder='0' style='border:0;' allowfullscreen='')
+  p.text-center Address: 3725 S Ocean Dr, Hollywood, FL 33019

@@ -1,0 +1,19 @@
+extends ../layout
+
+block content
+  .col-sm-8.offset-sm-2
+    form(method='POST')
+      legend Landlord, Reset Password
+      hr
+      input(type='hidden', name='_csrf', value=_csrf)
+      .form-group
+        p DO NOT USE THE SAME PASSWORD HERE AS YOU USE ON ANOTHER WEBSITE! We do not take responsibility if somehow someone hacks your password from this website.
+        label.col-form-label.font-weight-bold(for='password') New Password
+        input.form-control(type='password', name='password', id='password', placeholder='New password', autofocus, required)
+      .form-group
+        label.col-form-label.font-weight-bold(for='confirm') Confirm Password
+        input.form-control(type='password', name='confirm', id='confirm', placeholder='Confirm password', required)
+      .form-group
+        button.btn.btn-primary.btn-reset(type='submit')
+          i.fa.fa-keyboard-o
+          | Change Password

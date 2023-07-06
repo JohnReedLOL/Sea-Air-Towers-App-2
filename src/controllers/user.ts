@@ -1,13 +1,18 @@
+"use strict";
+
 import async from "async";
 import crypto from "crypto";
-import nodemailer from "nodemailer";
+// Commenting this out because email sender is broken.
+// import nodemailer from "nodemailer";
 import passport from "passport";
-import { User__OLD, UserDocument__OLD, AuthToken } from "../models__OLD/User__OLD";
+import { ApartmentType, Landlord, LandlordDocument, AuthToken } from "../models/Landlord";
+import { Apartment, ApartmentDocument } from "../models/Apartment";
+import { ApartmentBookings, ApartmentBookingsDocument } from "../models/ApartmentBookings";
 import { Request, Response, NextFunction } from "express";
 import { IVerifyOptions } from "passport-local";
 import { WriteError } from "mongodb";
 import { body, check, validationResult } from "express-validator";
-import "../config__OLD/passport";
+import "../config/passport";
 import { CallbackError, NativeError } from "mongoose";
 
 /**
@@ -16,7 +21,7 @@ import { CallbackError, NativeError } from "mongoose";
  */
 export const getLogin = (req: Request, res: Response): void => {
     if (req.user) {
-        return res.redirect("/old/");
+        return res.redirect("/");
     }
     res.render("account/login", {
         title: "Login",
@@ -36,19 +41,19 @@ export const postLogin = async (req: Request, res: Response, next: NextFunction)
 
     if (!errors.isEmpty()) {
         req.flash("errors", errors.array());
-        return res.redirect("/old/login");
+        return res.redirect("/login");
     }
 
-    passport.authenticate("local", (err: Error, user: UserDocument__OLD, info: IVerifyOptions) => {
+    passport.authenticate("local", (err: Error, user: LandlordDocument, info: IVerifyOptions) => {
         if (err) { return next(err); }
         if (!user) {
             req.flash("errors", {msg: info.message});
-            return res.redirect("/old/login");
+            return res.redirect("/login");
         }
         req.logIn(user, (err) => {
             if (err) { return next(err); }
             req.flash("success", { msg: "Success! You are logged in." });
-            res.redirect(req.session.returnTo || "/old/");
+            res.redirect(req.session.returnTo || "/");
         });
     })(req, res, next);
 };
@@ -59,7 +64,7 @@ export const postLogin = async (req: Request, res: Response, next: NextFunction)
  */
 export const logout = (req: Request, res: Response): void => {
     req.logout();
-    res.redirect("/old/");
+    res.redirect("/");
 };
 
 /**
@@ -68,7 +73,7 @@ export const logout = (req: Request, res: Response): void => {
  */
 export const getSignup = (req: Request, res: Response): void => {
     if (req.user) {
-        return res.redirect("/old/");
+        return res.redirect("/");
     }
     res.render("account/signup", {
         title: "Create Account"
@@ -89,19 +94,19 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
 
     if (!errors.isEmpty()) {
         req.flash("errors", errors.array());
-        return res.redirect("/old/signup");
+        return res.redirect("/signup");
     }
 
-    const user = new User__OLD({
-        email: req.body.email,
+    const user = new Landlord({
+        email: req.body.email.toLowerCase(), // Make it lowercase in database.,
         password: req.body.password
     });
 
-    User__OLD.findOne({ email: req.body.email }, (err: NativeError, existingUser: UserDocument__OLD) => {
+    Landlord.findOne({ email: req.body.email }, (err: NativeError, existingUser: LandlordDocument) => {
         if (err) { return next(err); }
         if (existingUser) {
-            req.flash("errors", { msg: "Account with that email address already exists." });
-            return res.redirect("/old/signup");
+            req.flash("errors", { msg: "Account with that email address already exists. If that email is yours, try signing in." });
+            return res.redirect("/signup");
         }
         user.save((err) => {
             if (err) { return next(err); }
@@ -109,7 +114,8 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
                 if (err) {
                     return next(err);
                 }
-                res.redirect("/old/");
+                req.flash("success", { msg: "You should be signed in now, check the upper right navigation bar of this page for your email: " + req.body.email.toLowerCase() + " . If you are signed in, you can now list an apartment. If you aren't signed in, please click on \"Landlord's Login\" and sign in." });
+                res.redirect("/");
             });
         });
     });
@@ -120,15 +126,27 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
  * @route GET /account
  */
 export const getAccount = (req: Request, res: Response): void => {
+    const user = req.user as LandlordDocument;
+    let apartments: ApartmentType[] = user.apartments;
+    if(typeof apartments != "undefined" && apartments != null) {
+        // it's good
+    } else {
+        // Set it to empty array
+        apartments = [];
+    }
+    const listings: number[]  = apartments.map( (apartment: ApartmentType) => apartment.apartmentNumber );
     res.render("account/profile", {
-        title: "Account Management"
+        title: "Landlord's Account Page",
+        listings: listings
     });
 };
 
+// Commented this out so users can't update their profile.
 /**
  * Update profile information.
  * @route POST /account/profile
  */
+/*
 export const postUpdateProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     await check("email", "Please enter a valid email address.").isEmail().run(req);
     await body("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
@@ -137,11 +155,11 @@ export const postUpdateProfile = async (req: Request, res: Response, next: NextF
 
     if (!errors.isEmpty()) {
         req.flash("errors", errors.array());
-        return res.redirect("/old/account");
+        return res.redirect("/account");
     }
 
-    const user = req.user as UserDocument__OLD;
-    User__OLD.findById(user.id, (err: NativeError, user: UserDocument__OLD) => {
+    const user = req.user as UserDocument;
+    User.findById(user.id, (err: NativeError, user: UserDocument) => {
         if (err) { return next(err); }
         user.email = req.body.email || "";
         user.profile.name = req.body.name || "";
@@ -152,15 +170,16 @@ export const postUpdateProfile = async (req: Request, res: Response, next: NextF
             if (err) {
                 if (err.code === 11000) {
                     req.flash("errors", { msg: "The email address you have entered is already associated with an account." });
-                    return res.redirect("/old/account");
+                    return res.redirect("/account");
                 }
                 return next(err);
             }
             req.flash("success", { msg: "Profile information has been updated." });
-            res.redirect("/old/account");
+            res.redirect("/account");
         });
     });
 };
+*/
 
 /**
  * Update current password.
@@ -174,17 +193,17 @@ export const postUpdatePassword = async (req: Request, res: Response, next: Next
 
     if (!errors.isEmpty()) {
         req.flash("errors", errors.array());
-        return res.redirect("/old/account");
+        return res.redirect("/account");
     }
 
-    const user = req.user as UserDocument__OLD;
-    User__OLD.findById(user.id, (err: NativeError, user: UserDocument__OLD) => {
+    const user = req.user as LandlordDocument;
+    Landlord.findById(user.id, (err: NativeError, user: LandlordDocument) => {
         if (err) { return next(err); }
         user.password = req.body.password;
         user.save((err: WriteError & CallbackError) => {
             if (err) { return next(err); }
             req.flash("success", { msg: "Password has been changed." });
-            res.redirect("/old/account");
+            res.redirect("/account");
         });
     });
 };
@@ -194,32 +213,45 @@ export const postUpdatePassword = async (req: Request, res: Response, next: Next
  * @route POST /account/delete
  */
 export const postDeleteAccount = (req: Request, res: Response, next: NextFunction): void => {
-    const user = req.user as UserDocument__OLD;
-    // Have to replace depracated "remove" method with "deleteOne", like in these docs:
-    /*
-        // Function call
-        // Delete first document that matches
-        // the condition i.e age >= 10
-        User.deleteOne({ age: { $gte: 10 } }).then(function(){
-            console.log("Data deleted"); // Success
-        }).catch(function(error){
-            console.log(error); // Failure
-        });
-    */
-   /*
-    User__OLD.remove({ _id: user.id }, (err) => {
+    const user = req.user as LandlordDocument;
+    // First delete the bookings under each apartment.
+    Apartment.find({ landlordEmail: user.email }, (err, apartments: any) => {
         if (err) { return next(err); }
-        req.logout();
-        req.flash("info", { msg: "Your account has been deleted." });
-        res.redirect("/old/");
+        // If there are apartments, delete the bookings under said apartments.
+        if (! (!apartments || !Array.isArray(apartments) || apartments.length === 0) ) {
+            apartments.forEach( (apartment) => {
+                // I used to write the deleteMany like this but that started giving me an error so I re-wrote it.
+                /*
+                ApartmentBookings.deleteMany({ apartmentNumber: apartment.apartmentNumber}, (err) => {
+                    if (err) { return next(err); }
+                });
+                */
+               // Example of deleteMany taken from https://www.geeksforgeeks.org/mongoose-deletemany-function/
+                ApartmentBookings.deleteMany({ apartmentNumber: apartment.apartmentNumber}).then( () => {
+                    console.log("ApartmentBookings deleted if they exist."); // Success
+                }).catch( (error) => {
+                    console.log(error); // Failure
+                    return next(error);
+                });
+            });
+        }
     });
-    */
-    User__OLD.deleteOne({ _id: user.id }).then( () => {
+    // Then delete all the apartments under this landlord
+    Apartment.deleteMany({ landlordEmail: user.email}).then( () => {
+        console.log("Apartments deleted"); // Success
+    }).catch( (error) => {
+        console.log(error); // Failure
+        return next(error);
+    });
+    // Then delete the landlord
+    Landlord.deleteOne({ _id: user.id }).then( () => {
+        console.log("Landlord deleted"); // Success
         req.logout();
-        req.flash("info", { msg: "Your account has been deleted." });
-        res.redirect("/old/");
-    }).catch( (err) => {
-        return next(err); // Failure
+        req.flash("success", { msg: "Your account has been deleted along with your apartments and their bookings." });
+        res.redirect("/");
+    }).catch( (error) => {
+        console.log(error); // Failure
+        return next(error);
     });
 };
 
@@ -229,15 +261,15 @@ export const postDeleteAccount = (req: Request, res: Response, next: NextFunctio
  */
 export const getOauthUnlink = (req: Request, res: Response, next: NextFunction): void => {
     const provider = req.params.provider;
-    const user = req.user as UserDocument__OLD;
-    User__OLD.findById(user.id, (err: NativeError, user: any) => {
+    const user = req.user as LandlordDocument;
+    Landlord.findById(user.id, (err: NativeError, user: any) => {
         if (err) { return next(err); }
         user[provider] = undefined;
         user.tokens = user.tokens.filter((token: AuthToken) => token.kind !== provider);
         user.save((err: WriteError) => {
             if (err) { return next(err); }
             req.flash("info", { msg: `${provider} account has been unlinked.` });
-            res.redirect("/old/account");
+            res.redirect("/account");
         });
     });
 };
@@ -248,16 +280,16 @@ export const getOauthUnlink = (req: Request, res: Response, next: NextFunction):
  */
 export const getReset = (req: Request, res: Response, next: NextFunction): void => {
     if (req.isAuthenticated()) {
-        return res.redirect("/old/");
+        return res.redirect("/");
     }
-    User__OLD
+    Landlord
         .findOne({ passwordResetToken: req.params.token })
         .where("passwordResetExpires").gt(Date.now())
         .exec((err, user) => {
             if (err) { return next(err); }
             if (!user) {
                 req.flash("errors", { msg: "Password reset token is invalid or has expired." });
-                return res.redirect("/old/forgot");
+                return res.redirect("/forgot");
             }
             res.render("account/reset", {
                 title: "Password Reset"
@@ -281,8 +313,8 @@ export const postReset = async (req: Request, res: Response, next: NextFunction)
     }
 
     async.waterfall([
-        function resetPassword(done: (err: any, user: UserDocument__OLD) => void) {
-            User__OLD
+        function resetPassword(done: (err: any, user: LandlordDocument) => void) {
+            Landlord
                 .findOne({ passwordResetToken: req.params.token })
                 .where("passwordResetExpires").gt(Date.now())
                 .exec((err, user: any) => {
@@ -302,7 +334,9 @@ export const postReset = async (req: Request, res: Response, next: NextFunction)
                     });
                 });
         },
-        function sendResetPasswordEmail(user: UserDocument__OLD, done: (err: Error) => void) {
+        // Commenting this out because the email sender is broken
+        /*
+        function sendResetPasswordEmail(user: LandlordDocument, done: (err: Error) => void) {
             const transporter = nodemailer.createTransport({
                 service: "SendGrid",
                 auth: {
@@ -321,9 +355,15 @@ export const postReset = async (req: Request, res: Response, next: NextFunction)
                 done(err);
             });
         }
+        */
+        // I'm keeping the name sendResetPasswordEmail but it no longer sends the email because the email sender is broken. Now it just says a success message.
+        function sendResetPasswordEmail(user: LandlordDocument, done: (err: Error) => void) {
+            req.flash("success", { msg: "Success! Your password has been changed." });
+            res.redirect("/");
+        }
     ], (err) => {
         if (err) { return next(err); }
-        res.redirect("/old/");
+        res.redirect("/");
     });
 };
 
@@ -333,7 +373,7 @@ export const postReset = async (req: Request, res: Response, next: NextFunction)
  */
 export const getForgot = (req: Request, res: Response): void => {
     if (req.isAuthenticated()) {
-        return res.redirect("/old/");
+        return res.redirect("/");
     }
     res.render("account/forgot", {
         title: "Forgot Password"
@@ -342,6 +382,9 @@ export const getForgot = (req: Request, res: Response): void => {
 
 /**
  * Create a random token, then the send user an email with a reset link.
+ * 
+ * Edit: This no longer sends email because the email sender stopped working, but the user can still change their password.
+ * Now this request just redirects the user to a password change page, the same page they would have gone to if they clicked the link in the email that used to be sent when the email sender was working.
  * @route POST /forgot
  */
 export const postForgot = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -352,7 +395,7 @@ export const postForgot = async (req: Request, res: Response, next: NextFunction
 
     if (!errors.isEmpty()) {
         req.flash("errors", errors.array());
-        return res.redirect("/old/forgot");
+        return res.redirect("/forgot");
     }
 
     async.waterfall([
@@ -362,12 +405,12 @@ export const postForgot = async (req: Request, res: Response, next: NextFunction
                 done(err, token);
             });
         },
-        function setRandomToken(token: AuthToken, done: (err: NativeError | WriteError, token?: AuthToken, user?: UserDocument__OLD) => void) {
-            User__OLD.findOne({ email: req.body.email }, (err: NativeError, user: any) => {
+        function setRandomToken(token: AuthToken, done: (err: NativeError | WriteError, token?: AuthToken, user?: LandlordDocument) => void) {
+            Landlord.findOne({ email: req.body.email }, (err: NativeError, user: any) => {
                 if (err) { return done(err); }
                 if (!user) {
                     req.flash("errors", { msg: "Account with that email address does not exist." });
-                    return res.redirect("/old/forgot");
+                    return res.redirect("/forgot");
                 }
                 user.passwordResetToken = token;
                 user.passwordResetExpires = Date.now() + 3600000; // 1 hour
@@ -376,7 +419,9 @@ export const postForgot = async (req: Request, res: Response, next: NextFunction
                 });
             });
         },
-        function sendForgotPasswordEmail(token: AuthToken, user: UserDocument__OLD, done: (err: Error) => void) {
+        // Commenting this out because the email sender is broken
+        /*
+        function sendForgotPasswordEmail(token: AuthToken, user: UserDocument, done: (err: Error) => void) {
             const transporter = nodemailer.createTransport({
                 service: "SendGrid",
                 auth: {
@@ -398,8 +443,15 @@ export const postForgot = async (req: Request, res: Response, next: NextFunction
                 done(err);
             });
         }
+        */
+        // I'm keeping the name sendForgetPasswordEmail but it no longer sends the email because the email sender is broken. Now it just reroutes to the password reset page.
+        function sendForgotPasswordEmail(token: AuthToken, user: LandlordDocument, done: (err: Error) => void) {
+            // Commenting this out because even though it was what was used before, it is insecure due to http instead of https.
+            // return res.redirect(`http://${req.headers.host}/reset/${token}`);
+            return res.redirect(`/reset/${token}`);
+        }
     ], (err) => {
         if (err) { return next(err); }
-        res.redirect("/old/forgot");
+        res.redirect("/forgot");
     });
 };

@@ -1,0 +1,11 @@
+extends ../layout
+//- This is no longer used - just do /search-for-apartments
+block content
+  .page-header
+    h3.text-center Apartments With Landlord Whose Email Is: #{landlordsEmail}
+    hr
+
+  ul
+    each apartment in apartments
+        li
+            a(href="/apartment/" + apartment.apartmentNumber) Apartment #{apartment.apartmentNumber}

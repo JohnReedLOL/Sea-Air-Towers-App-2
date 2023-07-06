@@ -1,0 +1,41 @@
+extends ../layout
+
+block content
+
+  - var todaysDateObject = new Date();
+  - var todaysDateString = todaysDateObject.toLocaleDateString();
+  - var nextDateObjectNew = new Date(todaysDateObject.valueOf());
+  - nextDateObjectNew.setDate(nextDateObjectNew.getDate() + 30);
+  - var nextDateString = nextDateObjectNew.toLocaleDateString();
+  - var dateRange = todaysDateString + " - " + nextDateString
+
+  .page-header
+    h3.text-center #{title}
+    hr
+
+  form.form-horizontal(action='/search-for-apartments', method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='numBedrooms') Number of bedrooms at least
+      .col-sm-7
+        input.form-control(type='numBedrooms', name='numBedrooms', id='numBedrooms', value='0')
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='numBathrooms') Number of bathrooms at least
+      .col-sm-7
+        input.form-control(type='numBathrooms', name='numBathrooms', id='numBathrooms', value='0')
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='dateRange') Available in date range
+      .col-sm-7
+        input.form-control(type='dateRange', name='dateRange', id='dateRange', value=dateRange)
+    .form-group.row.justify-content-center
+      .col-sm-4
+        button.btn.btn.btn-primary(type='submit')
+          i.fa.fa-pencil
+          | Search Apartments
+//-
+    This was to search by price for a given month
+    .form-group.row.justify-content-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='monthPrice') Price for month of [Month] at most [$X]
+      .col-sm-7
+        input.form-control(type='monthPrice', name='monthPrice', id='monthPrice', value='January $99999')
+//-

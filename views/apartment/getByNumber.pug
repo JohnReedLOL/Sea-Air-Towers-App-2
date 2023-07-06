@@ -1,0 +1,66 @@
+extends ../layout
+
+block content
+  .page-header
+    h3.text-center Listing For Apartment Number ##{apt.apartmentNumber}
+    hr
+
+    p 
+      b Landlord's email: 
+      | #{apt.landlordEmail}
+    p  
+      b Number of bedrooms: 
+      | #{apt.numBedrooms}
+    p  
+      b Number of bathrooms: 
+      | #{apt.numBathrooms}
+    p  
+      b Photos link (ex. Google Drive folder): 
+        a(href=apt.photosFolder) #{apt.photosFolder}
+    hr
+    p
+      b Additional information: 
+      //-  | #{apt.additionalInformation}
+      //- I am replacing the newlines with HTML line breaks like in https://stackoverflow.com/questions/14540788/jade-convert-new-lines-to-br-and-keep-the-content-encoded
+      //- Note that using "#" treats the contents as written while "!" treats it as HTML.
+      | !{'<br/>' + apt.additionalInformation.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>')}
+    hr
+    p
+      b January's rent: 
+      | $#{apt.januaryPrice}
+    p
+      b February's rent: 
+      | $#{apt.februaryPrice}
+    p
+      b March's rent: 
+      | $#{apt.marchPrice}
+    p
+      b April's rent: 
+      | $#{apt.aprilPrice}
+    p
+      b May's rent: 
+      | $#{apt.mayPrice}
+    p
+      b June's rent: 
+      | $#{apt.junePrice}
+    p
+      b July's rent: 
+      | $#{apt.julyPrice}
+    p 
+      b August's rent: 
+      | $#{apt.augustPrice}
+    p
+      b September's rent: 
+      | $#{apt.septemberPrice}
+    p
+      b October's rent: 
+      | $#{apt.octoberPrice}
+    p
+      b November's rent: 
+      | $#{apt.novemberPrice}
+    p
+      b December's rent: 
+      | $#{apt.decemberPrice}
+    p
+      b For sale price (note that a for sale price of 0 means not for sale): 
+      | $#{apt.forSalePrice}

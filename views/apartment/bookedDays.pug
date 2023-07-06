@@ -1,0 +1,12 @@
+extends ../layout
+
+block content
+  .page-header
+    h3.text-center #{title}
+    hr
+
+  .row.justify-content-center
+    ul
+      each dayBooked in daysBooked
+          li
+              p #{dayBooked.toDateString()}

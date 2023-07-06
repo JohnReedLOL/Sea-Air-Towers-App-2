@@ -1,0 +1,19 @@
+extends ../layout
+
+block content
+  h3.text-center #{title}
+  hr
+  .row
+    .col-sm-6
+      h4.text-center 
+        u
+          a(href="/account/edit-listing/" + apartmentNumber, style='color:black;') Edit Listing
+      p.text-center
+        a(href="/account/edit-listing/" + apartmentNumber) Edit listing for apartment ##{apartmentNumber}.
+
+    .col-sm-6
+      h4.text-center 
+        u
+          a(href="/account/update-availability/" + apartmentNumber, style='color:black;') Edit Availability
+      p.text-center
+        a(href="/account/update-availability/" + apartmentNumber) Edit availability for apartment ##{apartmentNumber}.
