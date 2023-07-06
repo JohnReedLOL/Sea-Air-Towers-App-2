@@ -114,7 +114,7 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
                 if (err) {
                     return next(err);
                 }
-                req.flash("success", { msg: "You should be signed in now, check the upper right navigation bar of this page for your email: " + req.body.email.toLowerCase() + " . If you are signed in, you can now list an apartment. If you aren't signed in, please click on \"Landlord's Login\" and sign in." });
+                req.flash("success", { msg: "You should be signed in now, check the navigation bar at the top of this page for your email: " + req.body.email.toLowerCase() + " . If you are signed in, you can now list an apartment. If you aren't signed in, please click on \"Landlord's Login\" and sign in." });
                 res.redirect("/");
             });
         });
