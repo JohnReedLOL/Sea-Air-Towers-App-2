@@ -5,7 +5,7 @@ block content
     h3 Profile Information
     hr
 
-  form.form-horizontal(action='/account/profile', method='POST')
+  form.form-horizontal(action='/old/account/profile', method='POST')
     input(type='hidden', name='_csrf', value=_csrf)
     .form-group.row.justify-content-md-center
       label.col-sm-3.col-form-label.text-right.font-weight-bold(for='email') Email
@@ -49,7 +49,7 @@ block content
     h3 Change Password
     hr
 
-  form.form-horizontal(action='/account/password', method='POST')
+  form.form-horizontal(action='/old/account/password', method='POST')
     input(type='hidden', name='_csrf', value=_csrf)
     .form-group.row.justify-content-md-center
       label.col-sm-3.col-form-label.text-right.font-weight-bold(for='password') New Password
@@ -69,7 +69,7 @@ block content
     h3 Delete Account
     hr
 
-  form.form-horizontal(action='/account/delete', method='POST')
+  form.form-horizontal(action='/old/account/delete', method='POST')
     .form-group.row.justify-content-md-center
       p.offset-sm-3.col-sm-7 You can delete your account, but keep in mind this action is irreversible.
       input(type='hidden', name='_csrf', value=_csrf)
@@ -85,7 +85,7 @@ block content
     .form-group.row.justify-content-md-center
       .offset-sm-3.col-sm-7
         if user.facebook
-          p: a.text-danger(href='/account/unlink/facebook') Unlink your Facebook account
+          p: a.text-danger(href='/old/account/unlink/facebook') Unlink your Facebook account
         else
-          p: a(href='/auth/facebook') Link your Facebook account
+          p: a(href='/old/auth/facebook') Link your Facebook account
 

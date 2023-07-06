@@ -4,7 +4,7 @@ import { expect } from "chai";
 
 describe("GET /login", () => {
     it("should return 200 OK", () => {
-        return request(app).get("/login")
+        return request(app).get("/old/login")
             .expect(200);
     });
 });
@@ -12,14 +12,14 @@ describe("GET /login", () => {
 
 describe("GET /forgot", () => {
     it("should return 200 OK", () => {
-        return request(app).get("/forgot")
+        return request(app).get("/old/forgot")
             .expect(200);
     });
 });
 
 describe("GET /signup", () => {
     it("should return 200 OK", (done) => {
-        request(app).get("/signup")
+        request(app).get("/old/signup")
             .expect(200)
             .end(() => done());
     });
@@ -34,7 +34,7 @@ describe("GET /reset", () => {
 
 describe("POST /login", () => {
     it("should return some defined error message with valid parameters", (done) => {
-        request(app).post("/login")
+        request(app).post("/old/login")
             .field("email", "john@me.com")
             .field("password", "Hunter2")
             .expect(302)

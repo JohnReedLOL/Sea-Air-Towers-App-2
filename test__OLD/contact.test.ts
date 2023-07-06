@@ -4,7 +4,7 @@ import { expect} from "chai";
 
 describe("GET /contact", () => {
     it("should return 200 OK", (done) => {
-        request(app).get("/contact")
+        request(app).get("/old/contact")
             .expect(200, done);
     });
 });
@@ -12,7 +12,7 @@ describe("GET /contact", () => {
 
 describe("POST /contact", () => {
     it("should return false from assert when no message is found", (done) => {
-        request(app).post("/contact")
+        request(app).post("/old/contact")
             .field("name", "John Doe")
             .field("email", "john@me.com")
             .end(function(err, res) {

@@ -9,20 +9,26 @@ if (fs.existsSync(".env")) {
     logger.debug("Using .env.example file to supply config environment variables");
     dotenv.config({ path: ".env.example" });  // you can delete this after you create your own .env file!
 }
-export const ENVIRONMENT = process.env.NODE_ENV;
-const prod = ENVIRONMENT === "production"; // Anything else is treated as 'dev'
+// export const ENVIRONMENT = process.env.NODE_ENV;
+// const prod = ENVIRONMENT === "production"; // Anything else is treated as 'dev'
+const prod = false;
 
 export const SESSION_SECRET = process.env["SESSION_SECRET"];
-export const MONGODB_URI = prod ? process.env["MONGODB_URI"] : process.env["MONGODB_URI_LOCAL"];
+
+/* Environment is always dev */
+// export const MONGODB_URI = prod ? process.env["MONGODB_URI"] : process.env["MONGODB_URI_LOCAL"];
+export const MONGODB_URI = process.env["MONGODB_URI"];
 
 if (!SESSION_SECRET) {
     logger.error("No client secret. Set SESSION_SECRET environment variable.");
     process.exit(1);
 }
-
+/* Edit: there is no local MongoDB ever and prod is always false. */
 if (!MONGODB_URI) {
     if (prod) {
         logger.error("No mongo connection string. Set MONGODB_URI environment variable.");
+        logger.error("prod variable should always be false. Exiting with exit code 2.");
+        process.exit(2);
     } else {
         logger.error("No mongo connection string. Set MONGODB_URI_LOCAL environment variable.");
     }

@@ -1,6 +1,6 @@
 nav.navbar.navbar-expand-lg.navbar-light.bg-light.fixed-top
   .container
-    a.navbar-brand(href='/')
+    a.navbar-brand(href='/old/')
       i.fa.fa-cube
       | Project name
     button.navbar-toggler(type='button', data-toggle='collapse', data-target='.navbar-collapse')
@@ -10,17 +10,17 @@ nav.navbar.navbar-expand-lg.navbar-light.bg-light.fixed-top
       .dropdown-divider
       ul.nav.navbar-nav.mr-auto
         li.nav-item(class=(title === 'Home') ? 'active' : undefined)
-          a.nav-link(href='/') Home
+          a.nav-link(href='/old/') Home
         li.nav-item(class=(title === 'API Examples') ? 'active' : undefined)
-          a.nav-link(href='/api') API Examples
+          a.nav-link(href='/old/api') API Examples
         li.nav-item(class=(title === 'Contact') ? 'active' : undefined)
-          a.nav-link(href='/contact') Contact
+          a.nav-link(href='/old/contact') Contact
       ul.nav.navbar-nav
         if !user
           li.nav-item(class=(title === 'Login') ? 'active' : undefined)
-            a.nav-link(href='/login') Login
+            a.nav-link(href='/old/login') Login
           li.nav-item(class=(title === 'Create Account') ? 'active' : undefined)
-            a.nav-link(href='/signup') Create Account
+            a.nav-link(href='/old/signup') Create Account
         else
           li.nav-item.dropdown(class=(title === 'Account Management') ? 'active' : undefined)
             a.nav-link.dropdown-toggle(href='#', data-toggle='dropdown')
@@ -32,7 +32,7 @@ nav.navbar.navbar-expand-lg.navbar-light.bg-light.fixed-top
               i.caret
             ul.dropdown-menu
               li.nav-item
-                a.nav-link(href='/account') My Account
+                a.nav-link(href='/old/account') My Account
               li.dropdown-divider
               li.nav-item
-                a.nav-link(href='/logout') Logout
+                a.nav-link(href='/old/logout') Logout
