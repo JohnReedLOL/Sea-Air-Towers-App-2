@@ -78,7 +78,7 @@ const validateDateRange = (dateRange: string) => {
 
 // Make sure prices look like "$N" or "N" where N is a number.
 const validatePrice = (price: string) => {
-    const priceTrimmed = price.trim();
+    const priceTrimmed = price.trim().replace(/,/g, ""); // Commas are stripped before validation and parsing.
     let priceNumber = priceTrimmed;
     // Remove the leading dollar sign.
     if(priceNumber.charAt(0) === "$") {
@@ -124,8 +124,8 @@ const validateLink = (link: string) => {
  * This does the actual searching for apartments in the database
  */
 export const postSearchForApartments = async (req: Request, res: Response, next: NextFunction) => {
-    await check("numBedrooms", "Number of bedrooms must be a number (without commas).").exists().isNumeric().run(req);
-    await check("numBathrooms", "Number of bathrooms must be a number (without commas).").exists().isNumeric().run(req);
+    await check("numBedrooms", "Number of bedrooms must be a number (without commas).").exists().custom((value: string) => validatePrice(value)).run(req);
+    await check("numBathrooms", "Number of bathrooms must be a number (without commas).").exists().custom((value: string) => validatePrice(value)).run(req);
     await check("dateRange", "Date range must be in format: MM/DD/YYYY - MM/DD/YYYY.").exists().custom( (dateRange: string) => {
         return validateDateRange(dateRange);
     }).run(req);
@@ -208,10 +208,11 @@ export const searchForApartments = (req: Request, res: Response) => {
  * POST /account/edit-listing/:apartmentNumber
  * Call to update listing for an apartment.
  */
+// Updated to handle commas in prices (e.g., "$1,200" or "1,200")
 export const postUpdateApartmentListing = async (req: Request, res: Response, next: NextFunction) => {
     const apartmentNumber = parseInt(req.params.apartmentNumber, 10);
-    await check("numBedrooms", "Number of bedrooms must be a number (without commas).").exists().isNumeric().run(req);
-    await check("numBathrooms", "Number of bathrooms must be a number (without commas).").exists().isNumeric().run(req);
+    await check("numBedrooms", "Number of bedrooms must be a number (e.g., 1200 or 1,200).").exists().isNumeric().run(req);
+    await check("numBathrooms", "Number of bathrooms must be a number (e.g., 1200 or 1,200).").exists().isNumeric().run(req);
 
     await check("photosFolder", "Photos link must be a valid link.").exists().custom( (url: string) => {
         return validateLink(url);
@@ -220,47 +221,47 @@ export const postUpdateApartmentListing = async (req: Request, res: Response, ne
         return validateHttpOrHttps(url);
     }).run(req);
 
-    await check("januaryPrice", "January's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("januaryPrice", "January's rent must be a number (e.g., 1200 or 1,200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("februaryPrice", "February's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("februaryPrice", "February's rent must be a number (e.g., 1200 or 1,200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("marchPrice", "March's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("marchPrice", "March's rent must be a number (e.g., 1200 or 1,200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("aprilPrice", "April's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("aprilPrice", "April's rent must be a number (e.g., 1200 or 1,200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("mayPrice", "May's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("mayPrice", "May's rent must be a number (e.g., 1200 or 1,200s).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("junePrice", "June's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("junePrice", "June's rent must be a number (e.g., 1200 or 1,200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("julyPrice", "July's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("julyPrice", "July's rent must be a number (e.g., 1200 or 1,200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("augustPrice", "August's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("augustPrice", "August's rent must be a number (e.g., 1200 or 1,200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("septemberPrice", "September's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("septemberPrice", "September's rent must be a number (e.g., 1200 or 1,200s).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("octoberPrice", "October's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("octoberPrice", "October's rent must be a number (e.g., 1200 or 1,200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("novemberPrice", "November's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("novemberPrice", "November's rent must be a number (e.g., 1200 or 1,200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("decemberPrice", "December's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("decemberPrice", "December's rent must be a number (e.g., 1200 or 1,200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
     if(req.body.forSalePrice == null || req.body.forSalePrice == undefined
        || req.body.forSalePrice == "") {
         req.body.forSalePrice = "0";
     }
-    await check("forSalePrice", "For sale price must be a number (without commas).").exists().custom( (price: string) => {
+    await check("forSalePrice", "For sale price must be a number (e.g., 1200 or 1,200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
 
@@ -271,6 +272,9 @@ export const postUpdateApartmentListing = async (req: Request, res: Response, ne
         return res.redirect("/account/edit-listing/" + apartmentNumber);
     }
 
+    // The .replace(/[$,]/g, "") removes both dollar signs and commas before parsing to float.
+    // This ensures consistent handling of input prices across all fields.
+
     const filter = { apartmentNumber: apartmentNumber };
     const user = req.user as LandlordDocument;
     const update = {
@@ -278,20 +282,20 @@ export const postUpdateApartmentListing = async (req: Request, res: Response, ne
         numBedrooms: parseFloat(req.body.numBedrooms.trim()),
         numBathrooms: parseFloat(req.body.numBathrooms.trim()),
         photosFolder: req.body.photosFolder.trim(),
-        januaryPrice: parseFloat(req.body.januaryPrice.trim().replace("$", "")), // ignore the dollar sign
-        februaryPrice: parseFloat(req.body.februaryPrice.trim().replace("$", "")),
-        marchPrice: parseFloat(req.body.marchPrice.trim().replace("$", "")),
-        aprilPrice: parseFloat(req.body.aprilPrice.trim().replace("$", "")),
-        mayPrice: parseFloat(req.body.mayPrice.trim().replace("$", "")),
-        junePrice: parseFloat(req.body.junePrice.trim().replace("$", "")),
-        julyPrice: parseFloat(req.body.julyPrice.trim().replace("$", "")),
-        augustPrice: parseFloat(req.body.augustPrice.trim().replace("$", "")),
-        septemberPrice: parseFloat(req.body.septemberPrice.trim().replace("$", "")),
-        octoberPrice: parseFloat(req.body.octoberPrice.trim().replace("$", "")),
-        novemberPrice: parseFloat(req.body.novemberPrice.trim().replace("$", "")),
-        decemberPrice: parseFloat(req.body.decemberPrice.trim().replace("$", "")),
+        januaryPrice: parseFloat(req.body.januaryPrice.trim().replace(/[$,]/g, "")), // ignore the dollar sign
+        februaryPrice: parseFloat(req.body.februaryPrice.trim().replace(/[$,]/g, "")), 
+        marchPrice: parseFloat(req.body.marchPrice.trim().replace(/[$,]/g, "")),      
+        aprilPrice: parseFloat(req.body.aprilPrice.trim().replace(/[$,]/g, "")),
+        mayPrice: parseFloat(req.body.mayPrice.trim().replace(/[$,]/g, "")),
+        junePrice: parseFloat(req.body.junePrice.trim().replace(/[$,]/g, "")),
+        julyPrice: parseFloat(req.body.julyPrice.trim().replace(/[$,]/g, "")),
+        augustPrice: parseFloat(req.body.augustPrice.trim().replace(/[$,]/g, "")),
+        septemberPrice: parseFloat(req.body.septemberPrice.trim().replace(/[$,]/g, "")),
+        octoberPrice: parseFloat(req.body.octoberPrice.trim().replace(/[$,]/g, "")),
+        novemberPrice: parseFloat(req.body.novemberPrice.trim().replace(/[$,]/g, "")),
+        decemberPrice: parseFloat(req.body.decemberPrice.trim().replace(/[$,]/g, "")),
         additionalInformation: req.body.additionalInformation,
-        forSalePrice: parseFloat(req.body.forSalePrice.trim().replace("$", ""))
+        forSalePrice: parseFloat(req.body.forSalePrice.trim().replace(/[$,]/g, ""))
     };
 
     // I'm starting to get an error here after moving this code to the new version so I'm commenting this out and re-writing it.
@@ -578,9 +582,9 @@ export const getCreateApartment = (req: Request, res: Response) => {
  * Create landlord's apartment.
  */
 export const postCreateApartment = async (req: Request, res: Response, next: NextFunction) => {
-    await check("apartmentNumber", "Apartment number must be a number (without commas).").exists().isNumeric().run(req);
-    await check("numBedrooms", "Number of bedrooms must be a number (without commas).").exists().isNumeric().run(req);
-    await check("numBathrooms", "Number of bathrooms must be a number (without commas).").exists().isNumeric().run(req);
+    await check("apartmentNumber", "Apartment number must be a number (e.g., 1200, 1,200, or $1200).").exists().custom((value: string) => validatePrice(value)).run(req);
+    await check("numBedrooms", "Number of bedrooms must be a number (e.g., 1200, 1,200, or $1200).").exists().custom((value: string) => validatePrice(value)).run(req);
+    await check("numBathrooms", "Number of bathrooms must be a number (e.g., 1200, 1,200, or $1200).").exists().custom((value: string) => validatePrice(value)).run(req);
 
     await check("photosFolder", "Photos link must be a valid link.").exists().custom( (url: string) => {
         return validateLink(url);
@@ -589,43 +593,43 @@ export const postCreateApartment = async (req: Request, res: Response, next: Nex
         return validateHttpOrHttps(url);
     }).run(req);
 
-    await check("januaryPrice", "January's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("januaryPrice", "January's rent must be a number (e.g., 1200, 1,200, or $1200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("februaryPrice", "February's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("februaryPrice", "February's rent must be a number (e.g., 1200, 1,200, or $1200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("marchPrice", "March's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("marchPrice", "March's rent must be a number (e.g., 1200, 1,200, or $1200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("aprilPrice", "April's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("aprilPrice", "April's rent must be a number (e.g., 1200, 1,200, or $1200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("mayPrice", "May's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("mayPrice", "May's rent must be a number (e.g., 1200, 1,200, or $1200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("junePrice", "June's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("junePrice", "June's rent must be a number (e.g., 1200, 1,200, or $1200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("julyPrice", "July's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("julyPrice", "July's rent must be a number (e.g., 1200, 1,200, or $1200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("augustPrice", "August's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("augustPrice", "August's rent must be a number (e.g., 1200, 1,200, or $1200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("septemberPrice", "September's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("septemberPrice", "September's rent must be a number (e.g., 1200, 1,200, or $1200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("octoberPrice", "October's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("octoberPrice", "October's rent must be a number (e.g., 1200, 1,200, or $1200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("novemberPrice", "November's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("novemberPrice", "November's rent must be a number (e.g., 1200, 1,200, or $1200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("decemberPrice", "December's rent must be a number (without commas).").exists().custom( (price: string) => {
+    await check("decemberPrice", "December's rent must be a number (e.g., 1200, 1,200, or $1200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
-    await check("forSalePrice", "For sale price must be a number (without commas).").exists().custom( (price: string) => {
+    await check("forSalePrice", "For sale price must be a number (e.g., 1200, 1,200, or $1200).").exists().custom( (price: string) => {
         return validatePrice(price);
     }).run(req);
 
@@ -636,6 +640,7 @@ export const postCreateApartment = async (req: Request, res: Response, next: Nex
         return res.redirect("/account/list-apartment");
     } // body.additional-information: "AdditionInfoRow1 111\r\nAdditionInfoRow2 222"
 
+    // The .replace(/[$,]/g, "") removes both dollar signs and commas before parsing to float.
     const user = req.user as LandlordDocument;
 
     const apartment = new Apartment({
@@ -644,20 +649,20 @@ export const postCreateApartment = async (req: Request, res: Response, next: Nex
         numBedrooms: parseFloat(req.body.numBedrooms.trim()),
         numBathrooms: parseFloat(req.body.numBathrooms.trim()),
         photosFolder: req.body.photosFolder.trim(), // Link to photos of your apartment on Google Drive
-        januaryPrice: parseFloat(req.body.januaryPrice.trim().replace("$", "")), // These don't need to be sent in - the form can just be filled with empty string.
-        februaryPrice: parseFloat(req.body.februaryPrice.trim().replace("$", "")),
-        marchPrice: parseFloat(req.body.marchPrice.trim().replace("$", "")),
-        aprilPrice: parseFloat(req.body.aprilPrice.trim().replace("$", "")),
-        mayPrice: parseFloat(req.body.mayPrice.trim().replace("$", "")),
-        junePrice: parseFloat(req.body.junePrice.trim().replace("$", "")),
-        julyPrice: parseFloat(req.body.julyPrice.trim().replace("$", "")),
-        augustPrice: parseFloat(req.body.augustPrice.trim().replace("$", "")),
-        septemberPrice: parseFloat(req.body.septemberPrice.trim().replace("$", "")),
-        octoberPrice: parseFloat(req.body.octoberPrice.trim().replace("$", "")),
-        novemberPrice: parseFloat(req.body.novemberPrice.trim().replace("$", "")),
-        decemberPrice: parseFloat(req.body.decemberPrice.trim().replace("$", "")),
+        januaryPrice: parseFloat(req.body.januaryPrice.trim().replace(/[$,]/g, "")), // These don't need to be sent in - the form can just be filled with empty string.
+        februaryPrice: parseFloat(req.body.februaryPrice.trim().replace(/[$,]/g, "")),
+        marchPrice: parseFloat(req.body.marchPrice.trim().replace(/[$,]/g, "")),
+        aprilPrice: parseFloat(req.body.aprilPrice.trim().replace(/[$,]/g, "")),
+        mayPrice: parseFloat(req.body.mayPrice.trim().replace(/[$,]/g, "")),
+        junePrice: parseFloat(req.body.junePrice.trim().replace(/[$,]/g, "")),
+        julyPrice: parseFloat(req.body.julyPrice.trim().replace(/[$,]/g, "")),
+        augustPrice: parseFloat(req.body.augustPrice.trim().replace(/[$,]/g, "")),
+        septemberPrice: parseFloat(req.body.septemberPrice.trim().replace(/[$,]/g, "")),
+        octoberPrice: parseFloat(req.body.octoberPrice.trim().replace(/[$,]/g, "")),
+        novemberPrice: parseFloat(req.body.novemberPrice.trim().replace(/[$,]/g, "")),
+        decemberPrice: parseFloat(req.body.decemberPrice.trim().replace(/[$,]/g, "")),
         additionalInformation: req.body.additionalInformation,
-        forSalePrice: parseFloat(req.body.forSalePrice.trim().replace("$", "")),
+        forSalePrice: parseFloat(req.body.forSalePrice.trim().replace(/[$,]/g, "")),
     });
 
     apartment.save((err: Error) => {
