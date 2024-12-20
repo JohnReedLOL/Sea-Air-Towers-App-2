@@ -4,10 +4,7 @@ block content
   .page-header
     h3.text-center Create An Apartment Listing
     hr
-    p.text-center 
-      b Note: This website does not support commas (,) inside numbers. If you include a comma in the rent or the price then it will throw an error.
-    hr
-
+   
   form.form-horizontal(action='/account/list-apartment', method='POST')
     input(type='hidden', name='_csrf', value=_csrf)
     .form-group.row.justify-content-center
