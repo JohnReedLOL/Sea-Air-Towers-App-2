@@ -124,8 +124,8 @@ const validateLink = (link: string) => {
  * This does the actual searching for apartments in the database
  */
 export const postSearchForApartments = async (req: Request, res: Response, next: NextFunction) => {
-    await check("numBedrooms", "Number of bedrooms must be a number (without commas).").exists().custom((value: string) => validatePrice(value)).run(req);
-    await check("numBathrooms", "Number of bathrooms must be a number (without commas).").exists().custom((value: string) => validatePrice(value)).run(req);
+    await check("numBedrooms", "Number of bedrooms must be a number (without commas).").exists().isNumeric().run(req);
+    await check("numBathrooms", "Number of bathrooms must be a number (without commas).").exists().isNumeric().run(req);
     await check("dateRange", "Date range must be in format: MM/DD/YYYY - MM/DD/YYYY.").exists().custom( (dateRange: string) => {
         return validateDateRange(dateRange);
     }).run(req);
@@ -211,8 +211,8 @@ export const searchForApartments = (req: Request, res: Response) => {
 // Updated to handle commas in prices (e.g., "$1,200" or "1,200")
 export const postUpdateApartmentListing = async (req: Request, res: Response, next: NextFunction) => {
     const apartmentNumber = parseInt(req.params.apartmentNumber, 10);
-    await check("numBedrooms", "Number of bedrooms must be a number (e.g., 1200 or 1,200).").exists().isNumeric().run(req);
-    await check("numBathrooms", "Number of bathrooms must be a number (e.g., 1200 or 1,200).").exists().isNumeric().run(req);
+    await check("numBedrooms", "Number of bedrooms must be a number (without commas).").exists().isNumeric().run(req);
+    await check("numBathrooms", "Number of bathrooms must be a number (without commas).").exists().isNumeric().run(req);
 
     await check("photosFolder", "Photos link must be a valid link.").exists().custom( (url: string) => {
         return validateLink(url);
@@ -582,9 +582,9 @@ export const getCreateApartment = (req: Request, res: Response) => {
  * Create landlord's apartment.
  */
 export const postCreateApartment = async (req: Request, res: Response, next: NextFunction) => {
-    await check("apartmentNumber", "Apartment number must be a number (e.g., 1200, 1,200, or $1200).").exists().custom((value: string) => validatePrice(value)).run(req);
-    await check("numBedrooms", "Number of bedrooms must be a number (e.g., 1200, 1,200, or $1200).").exists().custom((value: string) => validatePrice(value)).run(req);
-    await check("numBathrooms", "Number of bathrooms must be a number (e.g., 1200, 1,200, or $1200).").exists().custom((value: string) => validatePrice(value)).run(req);
+    await check("apartmentNumber", "Apartment number must be a number (without commas).").exists().isNumeric().run(req);
+    await check("numBedrooms", "Number of bedrooms must be a number (without commas).").exists().isNumeric().run(req);
+    await check("numBathrooms", "Number of bathrooms must be a number (without commas).").exists().isNumeric().run(req);
 
     await check("photosFolder", "Photos link must be a valid link.").exists().custom( (url: string) => {
         return validateLink(url);
