@@ -111,6 +111,7 @@ app.post("/signup", userController.postSignup);
 app.get("/contact", contactController.getContact);
 // Commenting this out because the email sender is broken, so can't do this action.
 // app.post("/contact", contactController.postContact);
+app.get("/mobile-app-shortcut", contactController.getMobileAppShortcut);
 app.get("/account", passportConfig.isAuthenticated, userController.getAccount);
 app.post("/account/password", passportConfig.isAuthenticated, userController.postUpdatePassword);
 app.post("/account/delete", passportConfig.isAuthenticated, userController.postDeleteAccount);

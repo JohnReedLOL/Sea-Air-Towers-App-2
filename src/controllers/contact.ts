@@ -26,6 +26,13 @@ export const getContact = (req: Request, res: Response) => {
     });
 };
 
+
+export const getMobileAppShortcut = (req: Request, res: Response) => {
+    res.render("mobile-app-shortcut", {
+        title: "Mobile App Shortcut"
+    });
+};
+
 // Commented this out because the email sender stopped working.
 /**
  * Send a contact form via Nodemailer.
