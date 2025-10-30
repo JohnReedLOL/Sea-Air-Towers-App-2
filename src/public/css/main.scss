@@ -2,6 +2,7 @@
 
 @import "lib/bootstrap/bootstrap";
 @import "lib/font-awesome/font-awesome";
+@import url('https://fonts.googleapis.com/css2?family=Petemoss&display=swap');
 
 @import "themes/default/default";
 
@@ -65,4 +66,11 @@ textarea {
 
 .fa {
   margin-right: 6px;
+}
+
+.petemoss-regular {
+  font-family: "Petemoss", cursive;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 60px;
 }
