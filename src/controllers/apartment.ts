@@ -174,13 +174,8 @@ export const postSearchForApartments = async (req: Request, res: Response, next:
 const ids = ['id1', 'id2', 'id3'];
 const usersWithIds = await User.find({ '_id': { $in: ids } });
     */
-    // Source of code: https://stackoverflow.com/questions/8069315/create-array-of-all-integers-between-two-numbers-inclusive-in-javascript-jquer 
-    let listRangeOfBedrooms = [];
-    for (var i = numBedrooms; i <= numBedroomsMax; i++) {
-        listRangeOfBedrooms.push(i);
-    }
 
-    Apartment.find({ numBathrooms: { $gte: numBathrooms }, numBedrooms: { $in: listRangeOfBedrooms }, 
+    Apartment.find({ numBathrooms: { $gte: numBathrooms }, numBedrooms: { $gte: numBedrooms, $lte: numBedroomsMax }, 
         }, (err, myApartments) => {
         if (err) { return next(err); }
         // const apartmentNumbersSet = new Set(apartmentNumbers);
