@@ -125,7 +125,7 @@ const validateLink = (link: string) => {
  */
 export const postSearchForApartments = async (req: Request, res: Response, next: NextFunction) => {
     await check("numBedrooms", "Minimum number of bedrooms must be a number (without commas).").exists().isNumeric().run(req);
-    await check("numBedroomsMax", "Maximum Number of bedrooms must be a number (without commas).").exists().isNumeric().run(req);
+    await check("numBedroomsMax", "Maximum number of bedrooms must be a number (without commas).").exists().isNumeric().run(req);
     await check("numBathrooms", "Number of bathrooms must be a number (without commas).").exists().isNumeric().run(req);
     await check("dateRange", "Date range must be in format: MM/DD/YYYY - MM/DD/YYYY.").exists().custom( (dateRange: string) => {
         return validateDateRange(dateRange);
@@ -169,7 +169,7 @@ export const postSearchForApartments = async (req: Request, res: Response, next:
     // }
     // const monthVariable = month + "Price";
     // Filter by numBathrooms, numBedrooms, and price for a given month now. Filter by dates booked later.
-    Apartment.find({ numBathrooms: { $gte: numBathrooms }, numBedrooms: { $gte: numBedrooms }, numBedroomsMax: { $lte: numBedroomsMax }, 
+    Apartment.find({ numBathrooms: { $gte: numBathrooms }, numBedrooms: { $gte: numBedrooms }, numBedrooms: { $lte: numBedroomsMax }, 
         }, (err, myApartments) => {
         if (err) { return next(err); }
         // const apartmentNumbersSet = new Set(apartmentNumbers);
