@@ -13,10 +13,15 @@ if (process.env.NODE_ENV === "development") {
 */
 
 // Nah, I want the errorHandler:
-app.use(errorHandler());
+// app.use(errorHandler());
+
+// Nah, I want prod now, no "app.use(errorHandler());"
 
 // I always want the environment to be "dev" (maybe I was supposed to use the word "development" instead of "dev", I'm not sure)
-app.set("env", "dev");
+// app.set("env", "dev");
+
+// Nah, I want production now, set it to "production"
+app.set("env", "production");
 
 /**
  * Start Express server.
