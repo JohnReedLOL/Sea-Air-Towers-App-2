@@ -1,19 +1,21 @@
 extends ../layout
 
 block content
-  h3.text-center #{title}
-  hr
-  .row
-    .col-sm-6
-      h4.text-center 
-        u
-          a(href="/account/edit-listing/" + apartmentNumber, style='color:black;') Edit Listing
-      p.text-center
-        a(href="/account/edit-listing/" + apartmentNumber) Edit listing for apartment ##{apartmentNumber}.
+  .sat-page-header
+    .container
+      h2 #{title}
 
-    .col-sm-6
-      h4.text-center 
-        u
-          a(href="/account/update-availability/" + apartmentNumber, style='color:black;') Edit Availability
-      p.text-center
-        a(href="/account/update-availability/" + apartmentNumber) Edit availability for apartment ##{apartmentNumber}.
+  .container.py-4
+    .row.g-4
+      .col-md-6
+        .sat-card.text-center.p-4
+          i.bi.bi-pencil-square.fs-1.text-ocean.d-block.mb-3
+          h5 Edit Listing
+          p.text-muted Edit the details and pricing for apartment ##{apartmentNumber}.
+          a.btn.btn-ocean(href="/account/edit-listing/" + apartmentNumber) Edit Listing
+      .col-md-6
+        .sat-card.text-center.p-4
+          i.bi.bi-calendar-check.fs-1.text-ocean.d-block.mb-3
+          h5 Edit Availability
+          p.text-muted Update booked and available dates for apartment ##{apartmentNumber}.
+          a.btn.btn-outline-ocean(href="/account/update-availability/" + apartmentNumber) Edit Availability

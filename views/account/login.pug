@@ -1,32 +1,25 @@
 extends ../layout
 
 block content
-  .page-header
-    h3 Sign in
-    hr
+  .sat-page-header
+    .container
+      h2 Sign In
 
-  form.form-horizontal(method='POST')
-    input(type='hidden', name='_csrf', value=_csrf)
-    .form-group.row.justify-content-md-center
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='email') Email
-      .col-sm-7
-        input.form-control(type='email', name='email', id='email', placeholder='Email', autofocus, required)
-    .form-group.row.justify-content-md-center
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='password') Password
-      .col-sm-7
-        input.form-control(type='password', name='password', id='password', placeholder='Password', required)
-    .form-group.row.justify-content-md-center
-      .offset-sm-3.col-sm-7
-        button.col-sm-3.btn.btn-primary(type='submit')
-          i.fa.fa-user
-          | Login
-        a.btn.btn-link(href='/forgot') Forgot your password?
-    .form-group.row.justify-content-md-center
-      .offset-sm-3.col-sm-7
-
-    hr
-
-    .form-group.row.justify-content-center
-      .offset-sm-3.col-sm-7
-        p.
-          If you you don't have an account, click #[a(href="/signup") Create Account].
+  .container.py-5
+    .sat-auth-card.sat-card-static
+      form.sat-form(method='POST')
+        input(type='hidden', name='_csrf', value=_csrf)
+        .mb-3
+          label.form-label(for='email') Email
+          input.form-control(type='email', name='email', id='email', placeholder='you@example.com', autofocus, required)
+        .mb-3
+          label.form-label(for='password') Password
+          input.form-control(type='password', name='password', id='password', placeholder='Password', required)
+        button.btn.btn-ocean.w-100(type='submit')
+          i.bi.bi-box-arrow-in-right.me-1
+          | Sign In
+      .text-center.mt-3
+        a.text-ocean(href='/forgot') Forgot password?
+      .text-center.mt-2
+        small Don't have an account?
+          a.text-ocean.ms-1(href='/signup') Create Account

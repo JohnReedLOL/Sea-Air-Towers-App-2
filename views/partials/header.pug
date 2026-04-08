@@ -1,38 +1,61 @@
-nav.navbar.navbar-expand-lg.navbar-light.bg-light.fixed-top
+nav.navbar.navbar-expand-lg.fixed-top.sat-navbar
   .container
-    a.navbar-brand(href='/')
-      i.fa.fa-home
-      | Go to home page
-    button.navbar-toggler(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+    a.navbar-brand.d-flex.align-items-center(href='/')
+      i.bi.bi-water.me-2
+      span Sea Air Towers
+    button.navbar-toggler(type='button' data-bs-toggle='collapse' data-bs-target='#navbarMain' aria-controls='navbarMain' aria-expanded='false' aria-label='Toggle navigation')
       span.navbar-toggler-icon
 
-    .collapse.navbar-collapse
-      .dropdown-divider
-      ul.nav.navbar-nav.mr-auto
-        li.nav-item(class=(title === 'Home') ? 'active' : undefined)
-          a.nav-link(href='/') Home
-        li.nav-item(class=(title === 'Mobile App Shortcut') ? 'active' : undefined)
-          a.nav-link(href='/mobile-app-shortcut') Mobile App Shortcut
-        li.nav-item(class=(title === 'Contact The Developer') ? 'active' : undefined)
-          a.nav-link(href='/contact') Contact The Developer
-      ul.nav.navbar-nav
+    #navbarMain.collapse.navbar-collapse
+      ul.navbar-nav.me-auto.mb-2.mb-lg-0
+        li.nav-item
+          a.nav-link(href='/' class=(title === 'Home') ? 'active' : '')
+            i.bi.bi-house-door.me-1
+            | Home
+        li.nav-item
+          a.nav-link(href='/search-for-apartments' class=(title === 'Search For Apartment') ? 'active' : '')
+            i.bi.bi-search.me-1
+            | Search
+        li.nav-item
+          a.nav-link(href='/contact' class=(title === 'Contact The Developer') ? 'active' : '')
+            i.bi.bi-envelope.me-1
+            | Contact
+        li.nav-item
+          a.nav-link(href='/mobile-app-shortcut' class=(title === 'Mobile App Shortcut') ? 'active' : '')
+            i.bi.bi-phone.me-1
+            | Mobile App
+      ul.navbar-nav
         if !user
-          li.nav-item(class=(title === 'Login') ? 'active' : undefined)
-            a.nav-link(href='/login') Landlord's Login
-          li.nav-item(class=(title === 'Create Account') ? 'active' : undefined)
-            a.nav-link(href='/signup') Create Account
+          li.nav-item
+            a.nav-link(href='/login' class=(title === 'Login') ? 'active' : '')
+              i.bi.bi-box-arrow-in-right.me-1
+              | Sign In
+          li.nav-item
+            a.btn.btn-accent.btn-sm.ms-lg-2.mt-2.mt-lg-0(href='/signup') Create Account
         else
-          li.nav-item.dropdown(class=(title === 'Account Management') ? 'active' : undefined)
-            a.nav-link.dropdown-toggle(href='#', data-toggle='dropdown')
+          li.nav-item.dropdown
+            a.nav-link.dropdown-toggle.d-flex.align-items-center(href='#' role='button' data-bs-toggle='dropdown' aria-expanded='false')
               if user.profile.picture
-                img(src=user.profile.picture, alt=(user.profile.name || user.email || user.id))
+                img.rounded-circle.me-2(src=user.profile.picture alt=(user.profile.name || user.email || user.id) width='28' height='28')
               else
-                img(src=user.gravatar(60), alt=(user.profile.name || user.email || user.id))
+                img.rounded-circle.me-2(src=user.gravatar(60) alt=(user.profile.name || user.email || user.id) width='28' height='28')
               span= user.profile.name || user.email || user.id
-              i.caret
-            ul.dropdown-menu
-              li.nav-item
-                a.nav-link(href='/account') My Account
-              li.dropdown-divider
-              li.nav-item
-                a.nav-link(href='/logout') Sign Out
+            ul.dropdown-menu.dropdown-menu-end
+              li
+                a.dropdown-item(href='/account')
+                  i.bi.bi-person.me-2
+                  | My Account
+              li
+                a.dropdown-item(href='/account/list-apartment')
+                  i.bi.bi-plus-circle.me-2
+                  | List Apartment
+              li
+                a.dropdown-item(href='/account/update-listing')
+                  i.bi.bi-pencil-square.me-2
+                  | Update Listing
+              li
+                hr.dropdown-divider
+              li
+                a.dropdown-item.text-danger(href='/logout')
+                  i.bi.bi-box-arrow-right.me-2
+                  | Sign Out

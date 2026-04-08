@@ -1,9 +1,12 @@
-extends ./layout
+extends layout
 
 block content
-  .page-header
-    h3.text-center
-      font(color='red') Error!
-    hr
-
-    p #{errorBody}
+  section.py-5
+    .container.d-flex.justify-content-center
+      .sat-card-static.p-5.text-center(style='max-width:520px;width:100%')
+        i.bi.bi-exclamation-triangle.display-1(style='color:#E63946')
+        h2.mt-3(style='font-family:"Playfair Display",serif') Something went wrong
+        p.text-muted.mt-3 #{errorBody}
+        a.btn.btn-ocean.mt-3(href='/')
+          i.bi.bi-house.me-2
+          | Go Home

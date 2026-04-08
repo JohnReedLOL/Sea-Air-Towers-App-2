@@ -18,5 +18,10 @@
     },
     "include": [
         "src/**/*"
+    ],
+    "exclude": [
+        "src/**/*__OLD*",
+        "src/**/*_OLD*",
+        "src/**/*.txt"
     ]
 }

@@ -7,7 +7,6 @@ import { find } from "lodash";
 // import { User, UserType } from '../models/User';
 import { Landlord, LandlordDocument } from "../models/Landlord"; // Note: Changed "User" to "Landlord"
 import { Request, Response, NextFunction } from "express";
-import { NativeError } from "mongoose";
 
 const LocalStrategy = passportLocal.Strategy;
 // const FacebookStrategy = passportFacebook.Strategy;
@@ -16,17 +15,22 @@ passport.serializeUser<any, any>((req, user, done) => {
     done(undefined, user);
 });
 
-passport.deserializeUser((id, done) => {
-    Landlord.findById(id, (err: NativeError, user: LandlordDocument) => done(err, user));
+passport.deserializeUser(async (id, done) => {
+    try {
+        const user = await Landlord.findById(id);
+        done(null, user);
+    } catch (err) {
+        done(err);
+    }
 });
 
 
 /**
  * Sign in using Email and Password.
  */
-passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
-    Landlord.findOne({ email: email.toLowerCase() }, (err: NativeError, user: LandlordDocument) => {
-        if (err) { return done(err); }
+passport.use(new LocalStrategy({ usernameField: "email" }, async (email, password, done) => {
+    try {
+        const user = await Landlord.findOne({ email: email.toLowerCase() }) as LandlordDocument;
         if (!user) {
             return done(undefined, false, { message: `Email ${email} not found.` });
         }
@@ -37,7 +41,9 @@ passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, don
             }
             return done(undefined, false, { message: "Invalid email or password." });
         });
-    });
+    } catch (err) {
+        return done(err);
+    }
 }));
 
 

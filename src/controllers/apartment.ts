@@ -7,9 +7,8 @@ import { ApartmentBookings, ApartmentBookingsDocument } from "../models/Apartmen
 import { Landlord, LandlordDocument } from "../models/Landlord";
 import { Request, Response, NextFunction } from "express";
 import { WriteError } from "mongodb";
-import { check, sanitize, validationResult } from "express-validator";
+import { check, validationResult } from "express-validator";
 import "../config/passport";
-import { reduce } from "bluebird";
 
 const addDaysToDate = (startDate: Date, days: number) => {
     const date = new Date(startDate.valueOf());
@@ -176,14 +175,10 @@ const usersWithIds = await User.find({ '_id': { $in: ids } });
     */
 
     Apartment.find({ numBathrooms: { $gte: numBathrooms }, numBedrooms: { $gte: numBedrooms, $lte: numBedroomsMax }, 
-        }, (err, myApartments) => {
-        if (err) { return next(err); }
-        // const apartmentNumbersSet = new Set(apartmentNumbers);
-        // const myApartmentsSet = new Set(myApartmentNumbers);
-        // Now we can filter by dates booked.
+        }).then(async (myApartmentsResult) => {
+        let myApartments = myApartmentsResult;
         const myApartmentNumbers = myApartments.map(a => a.apartmentNumber);
-        ApartmentBookings.find({apartmentNumber: { $in: myApartmentNumbers }}, (err, bookings: any) => {
-            if (err) { return next(err); }
+        const bookings: any = await ApartmentBookings.find({apartmentNumber: { $in: myApartmentNumbers }});
             // Filter out all the apartments whose dates are booked from the apartmentNumbersSet.
             for(const booking of bookings) {
                 const bookingDate: Date = booking.eveningBooked;
@@ -198,8 +193,7 @@ const usersWithIds = await User.find({ '_id': { $in: ids } });
                 title: "Apartments That Match Your Search",
                 myApartments: myNonBookedApartments
             });
-        });
-    });
+    }).catch((err: any) => { return next(err); });
 };
 
 /**
@@ -332,16 +326,13 @@ export const postUpdateApartmentListing = async (req: Request, res: Response, ne
     // Correcting deprecation warning according to https://stackoverflow.com/questions/52572852/deprecationwarning-collection-findandmodify-is-deprecated-use-findoneandupdate
     // await ModelName.findOneAndUpdate({matchQuery}, {$set: updateData}, {useFindAndModify: false});
     Apartment.findOneAndUpdate( filter, 
-        update, {useFindAndModify: false}, (err, docs) => {
-        if (err){
-            console.log(err);
-            return next(err);
-        }
-        else{
+        update).then((docs) => {
             console.log("Original Doc : ", docs);
             req.flash("success", { msg: "Success! Your listing has been updated." });
             res.redirect("/apartment/" + apartmentNumber);
-        }
+    }).catch((err: any) => {
+        console.log(err);
+        return next(err);
     });
 
 };
@@ -350,16 +341,18 @@ export const postUpdateApartmentListing = async (req: Request, res: Response, ne
  * GET /account/edit-listing/:apartmentNumber
  * Page to update listing for an apartment.
  */
-export const getUpdateApartmentListing = (req: Request, res: Response, next: NextFunction) => {
+export const getUpdateApartmentListing = async (req: Request, res: Response, next: NextFunction) => {
     const apartmentNumber = parseInt(req.params.apartmentNumber, 10);
-    Apartment.findOne( {apartmentNumber: apartmentNumber}, (err: any, apartment: any) => {
-        if (err) { return next(err); }
+    try {
+        const apartment = await Apartment.findOne( {apartmentNumber: apartmentNumber});
         res.render("apartment/update", {
             title: "Update Listing For Apartment #" + apartmentNumber,
             apartmentNumber: apartmentNumber,
             apartment: apartment
         });
-    });  
+    } catch (err) {
+        return next(err);
+    }
 };
 
 /**
@@ -411,23 +404,22 @@ export const postUpdateApartmentAvailability = async (req: Request, res: Respons
     for(let i = 0; i < dates.length; ++i) {
         apartmentBookings.push({apartmentNumber : apartmentNumber, eveningBooked: dates[i]});
     } 
-    ApartmentBookings.create(apartmentBookings, function (err: any, bookings: ApartmentBookingsDocument[]) {
-        if (err) {
-            if (err.code === 11000) { // If unique index already exists err = MongoError: E11000 duplicate
-                req.flash("info", { msg: "You tried to book a day that was already booked. Your days were booked anyway." });
-                return res.render("apartment/bookedDays", {
-                    title: "The Following Evenings Have Been Booked:",
-                    daysBooked: dates
-                });
-            } else {
-                return next(err);
-            }
-        }
+    ApartmentBookings.create(apartmentBookings).then((bookings: ApartmentBookingsDocument[]) => {
         const daysBooked: Date[] = bookings.map( (booking: ApartmentBookingsDocument) => booking.eveningBooked);
         return res.render("apartment/bookedDays", {
             title: "The Following Evenings Have Been Booked:",
             daysBooked: daysBooked
         });
+    }).catch((err: any) => {
+        if (err.code === 11000) { // If unique index already exists err = MongoError: E11000 duplicate
+            req.flash("info", { msg: "You tried to book a day that was already booked. Your days were booked anyway." });
+            return res.render("apartment/bookedDays", {
+                title: "The Following Evenings Have Been Booked:",
+                daysBooked: dates
+            });
+        } else {
+            return next(err);
+        }
     });
 };
 
@@ -492,13 +484,12 @@ export const chooseListingToUpdate = (req: Request, res: Response, next: NextFun
     const user = req.user as LandlordDocument;
     const landlordEMail = user.email.toLowerCase();
     // select only the Apartment's apartmentNumber.
-    Apartment.find({ landlordEmail: landlordEMail}, "apartmentNumber", null, (err, apartments: any) => {
-        if (err) { return next(err); }
+    Apartment.find({ landlordEmail: landlordEMail}, "apartmentNumber").then((apartments: any) => {
         res.render("apartment/pickApartmentToEdit", {
             title: "Pick An Apartment Number To Edit",
             apartments: apartments
         });
-    });
+    }).catch((err: any) => { return next(err); });
 };
 
 /**
@@ -520,13 +511,12 @@ export const updateListing = (req: Request, res: Response) => {
 export const getApartment = (req: Request, res: Response, next: NextFunction) => {
     const apartmentNumber = parseInt(req.params.apartmentNumber, 10);
 
-    Apartment.findOne( {apartmentNumber: apartmentNumber}, (err: any, apartment: any) => {
-        if (err) { return next(err); }
+    Apartment.findOne( {apartmentNumber: apartmentNumber}).then((apartment: any) => {
         res.render("apartment/getByNumber", {
             title: "Apartment Number " + apartmentNumber,
             apt: apartment
         });
-    });
+    }).catch((err: any) => { return next(err); });
 };
 
 /**
@@ -673,32 +663,23 @@ export const postCreateApartment = async (req: Request, res: Response, next: Nex
         forSalePrice: parseFloat(req.body.forSalePrice.trim().replace(/[$,]/g, "")),
     });
 
-    apartment.save((err: Error) => {
-        if (err) {
-            if (err.name.includes("11000") || err.message.includes("11000") || err.message.includes("duplicate") ) { // If apartment number already exists err = MongoError: E11000 duplicate key error collection: test.apartments index: apartmentNumber_1 dup key: { : 8 }
-                req.flash("errors", { msg: "The apartment number you entered already exists. Try a different one or ask for that listing to be deleted." });
-                return res.redirect("/account/list-apartment");
-            }
-            return next(err);
-        }
+    apartment.save().then(() => {
         // In addition to saving the apartment to the database, you must also update the Landlord with the link to their apartment.
         const newlyListedAppartment = {apartmentNumber: apartment.apartmentNumber};
         // Note that I do not know if I have to look up user in the database and use that or if it's okay to just use req.user
         user.apartments.push(newlyListedAppartment);
         
-        /*
-        user.save((err: Error) => {
-            req.flash("info", { msg: "Facebook account has been linked." });
-            done(err, user);
-        });
-        */
-        
-        user.save((err: Error) => {
-            if (err) { return next(err); }
-        });
-        // Done updating Landlord
-        req.flash("success", { msg: "Apartment " + apartment.apartmentNumber + " has been listed. Try pulling up this apartment or updating its availability." });
-        res.redirect("/");
+        user.save().then(() => {
+            // Done updating Landlord
+            req.flash("success", { msg: "Apartment " + apartment.apartmentNumber + " has been listed. Try pulling up this apartment or updating its availability." });
+            res.redirect("/");
+        }).catch((err: any) => { return next(err); });
+    }).catch((err: any) => {
+        if (err.name.includes("11000") || err.message.includes("11000") || err.message.includes("duplicate") ) {
+            req.flash("errors", { msg: "The apartment number you entered already exists. Try a different one or ask for that listing to be deleted." });
+            return res.redirect("/account/list-apartment");
+        }
+        return next(err);
     });
 };
 

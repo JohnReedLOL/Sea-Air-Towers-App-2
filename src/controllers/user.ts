@@ -10,10 +10,8 @@ import { Apartment, ApartmentDocument } from "../models/Apartment";
 import { ApartmentBookings, ApartmentBookingsDocument } from "../models/ApartmentBookings";
 import { Request, Response, NextFunction } from "express";
 import { IVerifyOptions } from "passport-local";
-import { WriteError } from "mongodb";
 import { body, check, validationResult } from "express-validator";
 import "../config/passport";
-import { CallbackError, NativeError } from "mongoose";
 
 /**
  * Login page.
@@ -62,9 +60,11 @@ export const postLogin = async (req: Request, res: Response, next: NextFunction)
  * Log out.
  * @route GET /logout
  */
-export const logout = (req: Request, res: Response): void => {
-    req.logout();
-    res.redirect("/");
+export const logout = (req: Request, res: Response, next: NextFunction): void => {
+    req.logout(function(err) {
+        if (err) { return next(err); }
+        res.redirect("/");
+    });
 };
 
 /**
@@ -102,14 +102,12 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
         password: req.body.password
     });
 
-    Landlord.findOne({ email: req.body.email }, (err: NativeError, existingUser: LandlordDocument) => {
-        if (err) { return next(err); }
+    Landlord.findOne({ email: req.body.email }).then((existingUser) => {
         if (existingUser) {
             req.flash("errors", { msg: "Account with that email address already exists. If that email is yours, try signing in." });
             return res.redirect("/signup");
         }
-        user.save((err) => {
-            if (err) { return next(err); }
+        user.save().then(() => {
             req.logIn(user, (err) => {
                 if (err) {
                     return next(err);
@@ -117,8 +115,8 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
                 req.flash("success", { msg: "You should be signed in now, check the navigation bar at the top of this page for your email: " + req.body.email.toLowerCase() + " . If you are signed in, you can now list an apartment. If you aren't signed in, please click on \"Landlord's Login\" and sign in." });
                 res.redirect("/");
             });
-        });
-    });
+        }).catch((err: any) => { return next(err); });
+    }).catch((err: any) => { return next(err); });
 };
 
 /**
@@ -197,104 +195,91 @@ export const postUpdatePassword = async (req: Request, res: Response, next: Next
     }
 
     const user = req.user as LandlordDocument;
-    Landlord.findById(user.id, (err: NativeError, user: LandlordDocument) => {
-        if (err) { return next(err); }
-        user.password = req.body.password;
-        user.save((err: WriteError & CallbackError) => {
-            if (err) { return next(err); }
-            req.flash("success", { msg: "Password has been changed." });
-            res.redirect("/account");
-        });
-    });
+    try {
+        const foundUser = await Landlord.findById(user.id) as LandlordDocument;
+        foundUser.password = req.body.password;
+        await foundUser.save();
+        req.flash("success", { msg: "Password has been changed." });
+        res.redirect("/account");
+    } catch (err) {
+        return next(err);
+    }
 };
 
 /**
  * Delete user account.
  * @route POST /account/delete
  */
-export const postDeleteAccount = (req: Request, res: Response, next: NextFunction): void => {
+export const postDeleteAccount = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const user = req.user as LandlordDocument;
-    // First delete the bookings under each apartment.
-    Apartment.find({ landlordEmail: user.email }, (err, apartments: any) => {
-        if (err) { return next(err); }
-        // If there are apartments, delete the bookings under said apartments.
-        if (! (!apartments || !Array.isArray(apartments) || apartments.length === 0) ) {
-            apartments.forEach( (apartment) => {
-                // I used to write the deleteMany like this but that started giving me an error so I re-wrote it.
-                /*
-                ApartmentBookings.deleteMany({ apartmentNumber: apartment.apartmentNumber}, (err) => {
-                    if (err) { return next(err); }
-                });
-                */
-               // Example of deleteMany taken from https://www.geeksforgeeks.org/mongoose-deletemany-function/
-                ApartmentBookings.deleteMany({ apartmentNumber: apartment.apartmentNumber}).then( () => {
-                    console.log("ApartmentBookings deleted if they exist."); // Success
-                }).catch( (error) => {
-                    console.log(error); // Failure
-                    return next(error);
-                });
-            });
+    try {
+        // First delete the bookings under each apartment.
+        const apartments = await Apartment.find({ landlordEmail: user.email });
+        if (apartments && Array.isArray(apartments) && apartments.length > 0) {
+            for (const apartment of apartments) {
+                await ApartmentBookings.deleteMany({ apartmentNumber: apartment.apartmentNumber });
+                console.log("ApartmentBookings deleted if they exist.");
+            }
         }
-    });
-    // Then delete all the apartments under this landlord
-    Apartment.deleteMany({ landlordEmail: user.email}).then( () => {
-        console.log("Apartments deleted"); // Success
-    }).catch( (error) => {
-        console.log(error); // Failure
+        // Then delete all the apartments under this landlord
+        await Apartment.deleteMany({ landlordEmail: user.email });
+        console.log("Apartments deleted");
+        // Then delete the landlord
+        await Landlord.deleteOne({ _id: user.id });
+        console.log("Landlord deleted");
+        req.logout(function(err) {
+            if (err) { return next(err); }
+            req.flash("success", { msg: "Your account has been deleted along with your apartments and their bookings." });
+            res.redirect("/");
+        });
+    } catch (error) {
+        console.log(error);
         return next(error);
-    });
-    // Then delete the landlord
-    Landlord.deleteOne({ _id: user.id }).then( () => {
-        console.log("Landlord deleted"); // Success
-        req.logout();
-        req.flash("success", { msg: "Your account has been deleted along with your apartments and their bookings." });
-        res.redirect("/");
-    }).catch( (error) => {
-        console.log(error); // Failure
-        return next(error);
-    });
+    }
 };
 
 /**
  * Unlink OAuth provider.
  * @route GET /account/unlink/:provider
  */
-export const getOauthUnlink = (req: Request, res: Response, next: NextFunction): void => {
+export const getOauthUnlink = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const provider = req.params.provider;
     const user = req.user as LandlordDocument;
-    Landlord.findById(user.id, (err: NativeError, user: any) => {
-        if (err) { return next(err); }
-        user[provider] = undefined;
-        user.tokens = user.tokens.filter((token: AuthToken) => token.kind !== provider);
-        user.save((err: WriteError) => {
-            if (err) { return next(err); }
-            req.flash("info", { msg: `${provider} account has been unlinked.` });
-            res.redirect("/account");
-        });
-    });
+    try {
+        const foundUser = await Landlord.findById(user.id) as any;
+        foundUser[provider] = undefined;
+        foundUser.tokens = foundUser.tokens.filter((token: AuthToken) => token.kind !== provider);
+        await foundUser.save();
+        req.flash("info", { msg: `${provider} account has been unlinked.` });
+        res.redirect("/account");
+    } catch (err) {
+        return next(err);
+    }
 };
 
 /**
  * Reset Password page.
  * @route GET /reset/:token
  */
-export const getReset = (req: Request, res: Response, next: NextFunction): void => {
+export const getReset = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     if (req.isAuthenticated()) {
         return res.redirect("/");
     }
-    Landlord
-        .findOne({ passwordResetToken: req.params.token })
-        .where("passwordResetExpires").gt(Date.now())
-        .exec((err, user) => {
-            if (err) { return next(err); }
-            if (!user) {
-                req.flash("errors", { msg: "Password reset token is invalid or has expired." });
-                return res.redirect("/forgot");
-            }
-            res.render("account/reset", {
-                title: "Password Reset"
-            });
+    try {
+        const user = await Landlord
+            .findOne({ passwordResetToken: req.params.token })
+            .where("passwordResetExpires").gt(Date.now())
+            .exec();
+        if (!user) {
+            req.flash("errors", { msg: "Password reset token is invalid or has expired." });
+            return res.redirect("/forgot");
+        }
+        res.render("account/reset", {
+            title: "Password Reset"
         });
+    } catch (err) {
+        return next(err);
+    }
 };
 
 /**
@@ -317,8 +302,8 @@ export const postReset = async (req: Request, res: Response, next: NextFunction)
             Landlord
                 .findOne({ passwordResetToken: req.params.token })
                 .where("passwordResetExpires").gt(Date.now())
-                .exec((err, user: any) => {
-                    if (err) { return next(err); }
+                .exec()
+                .then((user: any) => {
                     if (!user) {
                         req.flash("errors", { msg: "Password reset token is invalid or has expired." });
                         return res.redirect("back");
@@ -326,13 +311,13 @@ export const postReset = async (req: Request, res: Response, next: NextFunction)
                     user.password = req.body.password;
                     user.passwordResetToken = undefined;
                     user.passwordResetExpires = undefined;
-                    user.save((err: WriteError) => {
-                        if (err) { return next(err); }
+                    user.save().then(() => {
                         req.logIn(user, (err) => {
                             done(err, user);
                         });
-                    });
-                });
+                    }).catch((err: any) => { return next(err); });
+                })
+                .catch((err: any) => { return next(err); });
         },
         // Commenting this out because the email sender is broken
         /*
@@ -405,19 +390,18 @@ export const postForgot = async (req: Request, res: Response, next: NextFunction
                 done(err, token);
             });
         },
-        function setRandomToken(token: AuthToken, done: (err: NativeError | WriteError, token?: AuthToken, user?: LandlordDocument) => void) {
-            Landlord.findOne({ email: req.body.email }, (err: NativeError, user: any) => {
-                if (err) { return done(err); }
+        function setRandomToken(token: AuthToken, done: (err: any, token?: AuthToken, user?: LandlordDocument) => void) {
+            Landlord.findOne({ email: req.body.email }).then((user: any) => {
                 if (!user) {
                     req.flash("errors", { msg: "Account with that email address does not exist." });
                     return res.redirect("/forgot");
                 }
                 user.passwordResetToken = token;
                 user.passwordResetExpires = Date.now() + 3600000; // 1 hour
-                user.save((err: WriteError) => {
-                    done(err, token, user);
-                });
-            });
+                user.save().then(() => {
+                    done(null, token, user);
+                }).catch((err: any) => { done(err); });
+            }).catch((err: any) => { done(err); });
         },
         // Commenting this out because the email sender is broken
         /*

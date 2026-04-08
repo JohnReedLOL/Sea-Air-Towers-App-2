@@ -4,11 +4,9 @@ import session from "express-session";
 import bodyParser from "body-parser";
 import lusca from "lusca";
 import MongoStore from "connect-mongo";
-import flash from "express-flash";
 import path from "path";
 import mongoose from "mongoose";
 import passport from "passport";
-import bluebird from "bluebird";
 import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
 
 // Controllers (route handlers)
@@ -27,19 +25,8 @@ const app = express();
 
 // Connect to MongoDB
 const mongoUrl = MONGODB_URI;
-mongoose.Promise = bluebird;
 
-/*
-Note: When I did "npm start" from the terminal I got this:
-(node:28998) DeprecationWarning: current Server Discovery and Monitoring engine is deprecated, and will be removed in a future version. To use the new Server Discover and Monitoring engine, pass option { useUnifiedTopology: true } to the MongoClient constructor.
-(Use `node --trace-deprecation ...` to show where the warning was created)
-
-Googling the error gave me this: https://stackoverflow.com/questions/57895175/server-discovery-and-monitoring-engine-is-deprecated
-
-The weird thing is I have "useUnifiedTopology: true" below. I don't know what's wrong.
-*/
-
-mongoose.connect(mongoUrl, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true } ).then(
+mongoose.connect(mongoUrl).then(
     () => { /** ready to use. The `mongoose.connect()` promise resolves to undefined. */ },
 ).catch(err => {
     console.log(`MongoDB connection error. Please make sure MongoDB is running. ${err}`);
@@ -60,16 +47,39 @@ app.use(session({
     resave: true,
     saveUninitialized: true,
     secret: SESSION_SECRET,
-    store: new MongoStore({
-        mongoUrl,
-        mongoOptions: {
-            autoReconnect: true
-        }
+    store: MongoStore.create({
+        mongoUrl
     })
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(flash());
+
+// Flash message middleware (replaces deprecated express-flash/connect-flash)
+app.use((req, res, next) => {
+    if (!req.session) return next();
+    const flash = (req.session as any).flash || {};
+    (req.session as any).flash = {};
+    req.flash = function (type?: string, msg?: any) {
+        const s = (req.session as any);
+        if (!s.flash) s.flash = {};
+        if (type && msg) {
+            s.flash[type] = s.flash[type] || [];
+            s.flash[type].push(typeof msg === "string" ? { msg } : msg);
+            return s.flash[type];
+        }
+        if (type) {
+            const msgs = flash[type] || [];
+            return msgs;
+        }
+        return flash;
+    };
+    const origRender = res.render.bind(res);
+    res.render = function (view: string, options?: any, callback?: any) {
+        res.locals.messages = flash;
+        origRender(view, options, callback);
+    } as any;
+    next();
+});
 app.use(lusca.xframe("SAMEORIGIN"));
 app.use(lusca.xssProtection(true));
 app.use((req, res, next) => {

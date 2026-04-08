@@ -1,7 +1,7 @@
 // I copied this file from Users.ts and then changed "User" into "Landlord" here.
 // Note in this app all the landlords are users who can post an apartment listing.
 
-import bcrypt from "bcrypt-nodejs";
+import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import mongoose from "mongoose";
 
@@ -71,7 +71,7 @@ landlordSchema.pre("save", function save(next) {
     if (!landlord.isModified("password")) { return next(); }
     bcrypt.genSalt(10, (err, salt) => {
         if (err) { return next(err); }
-        bcrypt.hash(landlord.password, salt, undefined, (err: mongoose.Error, hash) => {
+        bcrypt.hash(landlord.password, salt, (err: Error | null, hash: string) => {
             if (err) { return next(err); }
             landlord.password = hash;
             next();
@@ -80,7 +80,7 @@ landlordSchema.pre("save", function save(next) {
 });
 
 const comparePassword: comparePasswordFunction = function (candidatePassword, cb) {
-    bcrypt.compare(candidatePassword, this.password, (err: mongoose.Error, isMatch: boolean) => {
+    bcrypt.compare(candidatePassword, this.password, (err: Error | null, isMatch: boolean) => {
         cb(err, isMatch);
     });
 };

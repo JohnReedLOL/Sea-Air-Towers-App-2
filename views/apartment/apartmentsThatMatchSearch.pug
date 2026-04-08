@@ -1,23 +1,33 @@
 extends ../layout
 
 block content
-  .page-header
-    h3.text-center #{title}
-    hr
+  .sat-page-header
+    .container
+      h2 #{title}
 
   - let hasAsterisk = false;
 
-  .row.justify-content-center
-    ul
+  .container.py-4
+    if myApartments && myApartments.length
       each myApartment in myApartments
-          li
-              - const mayBePenthouse = (myApartment.apartmentNumber < 28);
-              - let optionalAsterisk = "";
-              - if(mayBePenthouse) { optionalAsterisk = "*"; hasAsterisk = true; };
-              - let suffixText = "";
-              - if(myApartment.forSalePrice != null && myApartment.forSalePrice != undefined && myApartment.forSalePrice != 0) { suffixText = "For sale for $" + myApartment.forSalePrice;};
-              a(href="/apartment/" + myApartment.apartmentNumber) Apartment #{myApartment.apartmentNumber}
-              | #{optionalAsterisk} #{suffixText}
+        - const mayBePenthouse = (myApartment.apartmentNumber < 28);
+        - let optionalAsterisk = "";
+        - if(mayBePenthouse) { optionalAsterisk = "*"; hasAsterisk = true; };
+        - let suffixText = "";
+        - if(myApartment.forSalePrice != null && myApartment.forSalePrice != undefined && myApartment.forSalePrice != 0) { suffixText = "For sale for $" + myApartment.forSalePrice;};
+        .sat-apt-card.sat-card-static.p-3.mb-3
+          .d-flex.align-items-center.justify-content-between
+            div
+              a.fw-semibold.text-ocean(href="/apartment/" + myApartment.apartmentNumber) Apartment #{myApartment.apartmentNumber}
+              if optionalAsterisk
+                span.text-muted.ms-1 #{optionalAsterisk}
+            if suffixText
+              span.badge.bg-success #{suffixText}
 
-    if hasAsterisk
-      p * Note that four digit apartment numbers starting with "17" are penthouses and apartment numbers less than 13 are on the ground floor (lanai).
+      if hasAsterisk
+        p.text-muted.small.mt-3 * Note that four digit apartment numbers starting with "17" are penthouses and apartment numbers less than 13 are on the ground floor (lanai).
+    else
+      .sat-card-static.p-4.text-center
+        i.bi.bi-house-slash.fs-1.text-muted.d-block.mb-3
+        h5.text-muted No apartments found
+        p.text-muted.mb-0 Try adjusting your search criteria.

@@ -1,49 +1,63 @@
 extends layout
 
 block content
-  .page-header
-    h3.text-center #{title}
-    hr
-    p 
-        u Shortcut: 
-    p To add this website to your cellphone's Home Screen, please click on the Share arrow  (📤) in the iPhone Safari web browser or navigate to the "Add to Home screen" (📲) option in Google Chrome for Android, then confirm "Add to Home Screen". A shortcut icon to this website will appear on your phone's Home Screen.
-    p Image carousel of instructions on iPhone using Safari web browser: 
-    .row.justify-content-center
-        //- Added style to give images a fixed width //
-        //- #carouselExampleControls.carousel.slide(data-ride='carousel' style='height: auto; width: 886px !important;')  //
-        //- Changing fixed width from 886px to 400px because the image was too big before. //
-        #carouselExampleControls.carousel.slide(data-ride='carousel' style='height: auto; width: 400px !important;')  
-            .carousel-inner
-                //- Note: I moved the images of Sea Air Towers condominium from imagebb to this app's local /public folder. Old code commented out. //
-                .carousel-item.active
-                    //- img.d-block.w-100(src='https://i.ibb.co/YfPnCN5/IMG-1783.jpg' alt='Image 1 of Sea Air Towers condominium') //
-                    img.d-block.w-100(src='/images/Screenshot_2025-05-17_at_6.10.26_AM.png' alt='Screenshot 1 of iPhone')
-                .carousel-item
-                    //- img.d-block.w-100(src='https://i.ibb.co/18sw0V6/IMG-1813.jpg' alt='Image 2 of Sea Air Towers condominium') //
-                    img.d-block.w-100(src='/images/Sea_Air_Towers_URL_Screenshot.png' alt='Screenshot 2 of iPhone')
-                .carousel-item
-                    //- img.d-block.w-100(src='https://i.ibb.co/7WjGTtd/7-25.jpg' alt='Image 3 of Sea Air Towers condominium') //
-                    img.d-block.w-100(src='/images/Sea_Air_Towers_Vacation_Apartment_Rentals.png' alt='Screenshot 3 of iPhone')
-                .carousel-item
-                    //- img.d-block.w-100(src='https://i.ibb.co/VJypBy1/7-25-1.jpg' alt='Image 4 of Sea Air Towers condominium') //
-                    img.d-block.w-100(src='/images/Screenshot_iPhone_Add_To_Home_Screen.png' alt='Screenshot 4 of iPhone')
-                .carousel-item
-                    //- img.d-block.w-100(src='https://i.ibb.co/zSWxjFP/IMG-6137-1.jpg' alt='Image 5 of Sea Air Towers condominium') //
-                    img.d-block.w-100(src='/images/Screenshot_2025-05-17_at_6.24.23_AM.png' alt='Screenshot 5 of iPhone')
-                .carousel-item
-                    //- img.d-block.w-100(src='https://i.ibb.co/J5cqdxp/z.jpg' alt='Image 6 of Sea Air Towers condominium') //
-                    img.d-block.w-100(src='/images/Screenshot_iPhone_2025-05-17_at_6.26.37_AM.png' alt='Screenshot 6 of iPhone')
-            a.carousel-control-prev(href='#carouselExampleControls' role='button' data-slide='prev')
-                span.carousel-control-prev-icon(aria-hidden='true')
-                span.sr-only Previous
-            a.carousel-control-next(href='#carouselExampleControls' role='button' data-slide='next')
-                span.carousel-control-next-icon(aria-hidden='true')
-                span.sr-only Next
-    p.text-center Tap the left (⬅️) or right (➡️) arrows on the left or right edges of the above iPhone screenshot to scroll horizontally through the image carousel. It contains six screenshots. 
-    hr
-    
-    p Thanks, 
-    p - The Website Developer, John Michael Reed 
-    p p.s. If you have any issues, please email me at JohnMichaelReedFAS AT Gmail DOT com . Replace AT with an "@" and DOT with a "." 
+  section.sat-page-header.text-center.text-white
+    .container.py-4
+      h1(style='font-family:"Playfair Display",serif') Add to Home Screen
 
+  section.py-5
+    .container(style='max-width:720px')
+      p.lead.text-center.mb-4 Add a shortcut to this website on your phone's Home Screen for quick access.
 
+      //- Steps
+      .row.g-3.mb-5
+        .col-12
+          .sat-card-static.p-3.d-flex.align-items-start
+            span.badge.bg-ocean.rounded-circle.me-3.fs-5(style='width:2.5rem;height:2.5rem;line-height:2.5rem;text-align:center;flex-shrink:0') 1
+            div
+              h6.mb-1 Open in Your Browser
+              p.text-muted.mb-0 Navigate to this website in Safari (iPhone) or Chrome (Android).
+        .col-12
+          .sat-card-static.p-3.d-flex.align-items-start
+            span.badge.bg-ocean.rounded-circle.me-3.fs-5(style='width:2.5rem;height:2.5rem;line-height:2.5rem;text-align:center;flex-shrink:0') 2
+            div
+              h6.mb-1 Tap the Share Button
+              p.text-muted.mb-0 On iPhone, tap the Share arrow (📤). On Android, open the browser menu (⋮).
+        .col-12
+          .sat-card-static.p-3.d-flex.align-items-start
+            span.badge.bg-ocean.rounded-circle.me-3.fs-5(style='width:2.5rem;height:2.5rem;line-height:2.5rem;text-align:center;flex-shrink:0') 3
+            div
+              h6.mb-1 Add to Home Screen
+              p.text-muted.mb-0 Select "Add to Home Screen" (📲) and confirm. A shortcut icon will appear on your Home Screen.
+
+      //- Screenshot carousel
+      h5.text-center.mb-3 iPhone Safari — Step-by-Step Screenshots
+      .sat-carousel.mx-auto(style='max-width:400px')
+        #shortcutCarousel.carousel.slide(data-bs-ride='carousel')
+          .carousel-inner
+            .carousel-item.active
+              img.d-block.w-100(src='/images/Screenshot_2025-05-17_at_6.10.26_AM.png' alt='Screenshot 1 of iPhone')
+            .carousel-item
+              img.d-block.w-100(src='/images/Sea_Air_Towers_URL_Screenshot.png' alt='Screenshot 2 of iPhone')
+            .carousel-item
+              img.d-block.w-100(src='/images/Sea_Air_Towers_Vacation_Apartment_Rentals.png' alt='Screenshot 3 of iPhone')
+            .carousel-item
+              img.d-block.w-100(src='/images/Screenshot_iPhone_Add_To_Home_Screen.png' alt='Screenshot 4 of iPhone')
+            .carousel-item
+              img.d-block.w-100(src='/images/Screenshot_2025-05-17_at_6.24.23_AM.png' alt='Screenshot 5 of iPhone')
+            .carousel-item
+              img.d-block.w-100(src='/images/Screenshot_iPhone_2025-05-17_at_6.26.37_AM.png' alt='Screenshot 6 of iPhone')
+          button.carousel-control-prev(type='button' data-bs-target='#shortcutCarousel' data-bs-slide='prev')
+            span.carousel-control-prev-icon(aria-hidden='true')
+            span.visually-hidden Previous
+          button.carousel-control-next(type='button' data-bs-target='#shortcutCarousel' data-bs-slide='next')
+            span.carousel-control-next-icon(aria-hidden='true')
+            span.visually-hidden Next
+
+      hr.my-5
+      .text-center.text-muted
+        p.mb-1 Website developed by John Michael Reed
+        p.small
+          | Questions? Email JohnMichaelReedFAS AT Gmail DOT com
+          br
+          | (Replace AT with @ and DOT with .)

@@ -1,52 +1,54 @@
 extends ../layout
 
 block content
-  .page-header
-    h3.text-center #{title}
-    hr
+  .sat-page-header
+    .container
+      h2 #{title}
 
-  .page-header
-    h4.text-center My Listings:
+  .container.py-5
+    //- My Listings
+    .sat-card-static.mb-4
+      h5
+        i.bi.bi-building.me-2.text-ocean
+        | My Listings
+      if listings && listings.length
+        .list-group.list-group-flush
+          each apartmentNumber in listings
+            a.list-group-item.list-group-item-action.d-flex.align-items-center(href='/apartment/' + apartmentNumber)
+              i.bi.bi-building.me-2.text-ocean
+              | Apartment #{apartmentNumber}
+      else
+        p.text-muted.mb-1 No listings yet.
+        a.text-ocean(href='/apartment/create')
+          i.bi.bi-plus-circle.me-1
+          | Create your first listing
 
-  .row.justify-content-center
-    ul
-      each apartmentNumber in listings
-          li
-              a(href="/apartment/" + apartmentNumber) Apartment #{apartmentNumber}
-
-  hr
-
-  .page-header
-    h4.text-center Change Password
-
-  form.form-horizontal(action='/account/password', method='POST')
-    input(type='hidden', name='_csrf', value=_csrf)
-    .form-group.row.justify-content-center
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='password') New Password
-      .col-sm-7
-        input.form-control(type='password', name='password', id='password')
-    .form-group.row.justify-content-center
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='confirmPassword') Confirm Password
-      .col-sm-7
-        input.form-control(type='password', name='confirmPassword', id='confirmPassword')
-    .form-group.row.justify-content-center
-      .col-sm-4
-        button.btn.btn-primary(type='submit')
-          i.fa.fa-lock
+    //- Change Password
+    .sat-card-static.mb-4
+      h5
+        i.bi.bi-key.me-2.text-ocean
+        | Change Password
+      form.sat-form(action='/account/password', method='POST')
+        input(type='hidden', name='_csrf', value=_csrf)
+        .mb-3
+          label.form-label(for='password') New Password
+          input.form-control(type='password', name='password', id='password', placeholder='New password', required)
+        .mb-3
+          label.form-label(for='confirmPassword') Confirm Password
+          input.form-control(type='password', name='confirmPassword', id='confirmPassword', placeholder='Confirm password', required)
+        button.btn.btn-ocean(type='submit')
+          i.bi.bi-lock.me-1
           | Change Password
 
-    hr
-
-  .page-header
-    h4.text-center Delete Account
-
-  form.form-horizontal(action='/account/delete', method='POST')
-    .form-group.row.justify-content-center
-      p.offset-sm-3.col-sm-7 You can delete your account, but keep in mind this action is irreversible.
-      p.offset-sm-3.col-sm-7 All apartments under your email will also be deleted, as will the bookings under those apartments.
-      input(type='hidden', name='_csrf', value=_csrf)
-      .col-sm-4
+    //- Delete Account
+    .sat-card-static.border-danger.mb-4
+      h5.text-danger
+        i.bi.bi-exclamation-triangle.me-2
+        | Delete Account
+      p.text-muted This action is irreversible. All apartments and bookings under your account will also be deleted.
+      form(action='/account/delete', method='POST')
+        input(type='hidden', name='_csrf', value=_csrf)
         button.btn.btn-danger(type='submit')
-          i.fa.fa-trash
+          i.bi.bi-trash.me-1
           | Delete my account
 

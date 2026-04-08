@@ -1,12 +1,14 @@
 extends ../layout
 
 block content
-  .page-header
-    h3.text-center #{title}
-    hr
+  .sat-page-header
+    .container
+      h2 #{title}
 
-  .row.justify-content-center
-    ul
-      each booking in bookings
-          li
-              p #{booking.toDateString()}
+  .container.py-4
+    .sat-card-static.p-4
+      ul.list-group.list-group-flush
+        each booking in bookings
+          li.list-group-item
+            i.bi.bi-x-circle.text-warning.me-2
+            | #{booking.toDateString()}

@@ -1,12 +1,14 @@
 extends ../layout
 
 block content
-  .page-header
-    h3.text-center #{title}
-    hr
+  .sat-page-header
+    .container
+      h2 #{title}
 
-  .row.justify-content-center
-    ul
-      each apartment in apartments
-          li
-              a(href="/account/update-listing/" + apartment.apartmentNumber) Apartment #{apartment.apartmentNumber}
+  .container.py-4
+    .sat-card-static.p-4
+      ul.list-group.list-group-flush
+        each apartment in apartments
+          a.list-group-item.list-group-item-action(href="/account/update-listing/" + apartment.apartmentNumber)
+            i.bi.bi-building.me-2.text-ocean
+            | Apartment #{apartment.apartmentNumber}
