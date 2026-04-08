@@ -4,7 +4,6 @@ import session from "express-session";
 import bodyParser from "body-parser";
 import lusca from "lusca";
 import MongoStore from "connect-mongo";
-import flash from "express-flash";
 import path from "path";
 import mongoose from "mongoose";
 import passport from "passport";
@@ -54,7 +53,33 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(flash());
+
+// Flash message middleware (replaces deprecated express-flash/connect-flash)
+app.use((req, res, next) => {
+    if (!req.session) return next();
+    const flash = (req.session as any).flash || {};
+    (req.session as any).flash = {};
+    req.flash = function (type?: string, msg?: any) {
+        const s = (req.session as any);
+        if (!s.flash) s.flash = {};
+        if (type && msg) {
+            s.flash[type] = s.flash[type] || [];
+            s.flash[type].push(typeof msg === "string" ? { msg } : msg);
+            return s.flash[type];
+        }
+        if (type) {
+            const msgs = flash[type] || [];
+            return msgs;
+        }
+        return flash;
+    };
+    const origRender = res.render.bind(res);
+    res.render = function (view: string, options?: any, callback?: any) {
+        res.locals.messages = flash;
+        origRender(view, options, callback);
+    } as any;
+    next();
+});
 app.use(lusca.xframe("SAMEORIGIN"));
 app.use(lusca.xssProtection(true));
 app.use((req, res, next) => {

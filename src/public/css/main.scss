@@ -37,7 +37,7 @@ body {
   min-height: 100vh;
 }
 
-main { flex: 1; padding-top: 76px; }
+main { flex: 1; padding-top: 56px; }
 
 h1, h2, h3 {
   font-family: var(--sat-font-display);
@@ -277,26 +277,38 @@ a:hover { color: var(--sat-ocean-dark); }
 /* ===== Pricing Table ===== */
 .sat-pricing-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.75rem;
+}
+@media (max-width: 992px) {
+  .sat-pricing-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 576px) {
+  .sat-pricing-grid { grid-template-columns: repeat(2, 1fr); }
 }
 .sat-price-cell {
   background: var(--sat-sky);
   border-radius: var(--sat-radius-sm);
-  padding: 0.75rem;
+  padding: 1rem 0.75rem;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
 }
 .sat-price-cell .month {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
   color: var(--sat-gray-600);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
+  display: block;
 }
 .sat-price-cell .price {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: var(--sat-ocean-dark);
+  display: block;
 }
 
 /* ===== Carousel ===== */
@@ -339,6 +351,7 @@ a:hover { color: var(--sat-ocean-dark); }
   padding: 2.5rem 0;
   margin-bottom: 2rem;
 }
+.sat-page-header .container { position: relative; z-index: 1; }
 .sat-page-header h1,
 .sat-page-header h2,
 .sat-page-header h3 {
@@ -346,6 +359,10 @@ a:hover { color: var(--sat-ocean-dark); }
   margin: 0;
 }
 .sat-page-header p { opacity: 0.85; margin-bottom: 0; }
+
+main { flex: 1; padding-top: 56px; }
+main > .sat-page-header,
+main > .sat-hero { margin-top: 0; }
 
 /* ===== Utility ===== */
 .text-ocean { color: var(--sat-ocean) !important; }
