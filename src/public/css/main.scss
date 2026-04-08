@@ -1,9 +1,356 @@
-@import "themes/default/variables";
+// We no longer import vendored Bootstrap — it's loaded via CDN.
+// Only custom theme styles below.
 
-@import "lib/bootstrap/bootstrap";
-@import "lib/font-awesome/font-awesome";
+/* ===== CSS Custom Properties ===== */
+:root {
+  --sat-ocean: #0077B6;
+  --sat-ocean-dark: #005F8A;
+  --sat-ocean-light: #90E0EF;
+  --sat-sky: #CAF0F8;
+  --sat-sand: #F5E6D3;
+  --sat-sand-dark: #D4A574;
+  --sat-coral: #FF6B6B;
+  --sat-coral-dark: #E85555;
+  --sat-white: #FFFFFF;
+  --sat-gray-50: #F8F9FA;
+  --sat-gray-100: #F1F3F5;
+  --sat-gray-600: #6C757D;
+  --sat-gray-800: #343A40;
+  --sat-gray-900: #212529;
+  --sat-radius: 12px;
+  --sat-radius-sm: 8px;
+  --sat-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --sat-shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  --sat-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --sat-font-display: 'Playfair Display', Georgia, serif;
+}
 
-@import "themes/default/default";
+/* ===== Base ===== */
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sat-font);
+  color: var(--sat-gray-800);
+  background: var(--sat-gray-50);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main { flex: 1; padding-top: 76px; }
+
+h1, h2, h3 {
+  font-family: var(--sat-font-display);
+  color: var(--sat-gray-900);
+}
+
+a { color: var(--sat-ocean); transition: color 0.2s; }
+a:hover { color: var(--sat-ocean-dark); }
+
+/* ===== Navbar ===== */
+.sat-navbar {
+  background: rgba(255,255,255,0.95) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+  transition: background 0.3s, box-shadow 0.3s;
+  padding: 0.6rem 0;
+}
+
+.sat-navbar .navbar-brand {
+  font-family: var(--sat-font-display);
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: var(--sat-ocean) !important;
+}
+
+.sat-navbar .navbar-brand i { font-size: 1.5rem; }
+
+.sat-navbar .nav-link {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--sat-gray-800) !important;
+  padding: 0.5rem 0.85rem !important;
+  border-radius: var(--sat-radius-sm);
+  transition: background 0.2s, color 0.2s;
+}
+
+.sat-navbar .nav-link:hover,
+.sat-navbar .nav-link.active {
+  color: var(--sat-ocean) !important;
+  background: var(--sat-sky);
+}
+
+.sat-navbar .dropdown-menu {
+  border: none;
+  box-shadow: var(--sat-shadow-lg);
+  border-radius: var(--sat-radius);
+  padding: 0.5rem;
+}
+
+.sat-navbar .dropdown-item {
+  border-radius: var(--sat-radius-sm);
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+.sat-navbar .dropdown-item:hover { background: var(--sat-sky); }
+
+/* ===== Buttons ===== */
+.btn-ocean {
+  background: var(--sat-ocean);
+  color: white;
+  border: none;
+  border-radius: var(--sat-radius-sm);
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+.btn-ocean:hover {
+  background: var(--sat-ocean-dark);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0,119,182,0.3);
+}
+
+.btn-accent {
+  background: var(--sat-coral);
+  color: white;
+  border: none;
+  border-radius: var(--sat-radius-sm);
+  font-weight: 600;
+  padding: 0.4rem 1.2rem;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-accent:hover {
+  background: var(--sat-coral-dark);
+  color: white;
+  transform: translateY(-1px);
+}
+
+.btn-outline-ocean {
+  border: 2px solid var(--sat-ocean);
+  color: var(--sat-ocean);
+  background: transparent;
+  border-radius: var(--sat-radius-sm);
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  transition: all 0.2s;
+}
+.btn-outline-ocean:hover {
+  background: var(--sat-ocean);
+  color: white;
+}
+
+/* ===== Cards ===== */
+.sat-card {
+  background: var(--sat-white);
+  border: none;
+  border-radius: var(--sat-radius);
+  box-shadow: var(--sat-shadow);
+  transition: transform 0.2s, box-shadow 0.2s;
+  overflow: hidden;
+}
+.sat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--sat-shadow-lg);
+}
+
+.sat-card-static {
+  background: var(--sat-white);
+  border: none;
+  border-radius: var(--sat-radius);
+  box-shadow: var(--sat-shadow);
+}
+
+/* ===== Hero ===== */
+.sat-hero {
+  background: linear-gradient(135deg, var(--sat-ocean) 0%, #023E8A 100%);
+  color: white;
+  padding: 4rem 0 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.sat-hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+}
+
+.sat-hero h1 {
+  font-family: var(--sat-font-display);
+  color: white;
+  font-size: 2.8rem;
+  line-height: 1.2;
+}
+
+.sat-hero .lead {
+  font-size: 1.15rem;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+@media (max-width: 768px) {
+  .sat-hero { padding: 3rem 0 2rem; }
+  .sat-hero h1 { font-size: 2rem; }
+}
+
+/* ===== Section Titles ===== */
+.sat-section-title {
+  font-family: var(--sat-font-display);
+  font-weight: 700;
+  color: var(--sat-gray-900);
+  margin-bottom: 0.5rem;
+}
+
+.sat-section-subtitle {
+  color: var(--sat-gray-600);
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* ===== Forms ===== */
+.sat-form .form-control,
+.sat-form .form-select {
+  border-radius: var(--sat-radius-sm);
+  border: 1.5px solid #DEE2E6;
+  padding: 0.65rem 1rem;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.sat-form .form-control:focus,
+.sat-form .form-select:focus {
+  border-color: var(--sat-ocean);
+  box-shadow: 0 0 0 3px rgba(0,119,182,0.15);
+}
+
+.sat-form .form-label {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--sat-gray-800);
+  margin-bottom: 0.35rem;
+}
+
+.sat-form textarea.form-control { min-height: 100px; }
+
+/* ===== Auth Cards ===== */
+.sat-auth-card {
+  max-width: 480px;
+  margin: 2rem auto;
+  padding: 2.5rem;
+}
+
+/* ===== Feature Cards ===== */
+.sat-feature-card {
+  text-align: center;
+  padding: 2rem 1.5rem;
+}
+.sat-feature-card .sat-feature-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--sat-sky);
+  color: var(--sat-ocean);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 1.5rem;
+}
+
+/* ===== Apartment Cards ===== */
+.sat-apt-card {
+  border-left: 4px solid var(--sat-ocean);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+}
+.sat-apt-card:hover { border-left-color: var(--sat-coral); }
+
+/* ===== Pricing Table ===== */
+.sat-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+.sat-price-cell {
+  background: var(--sat-sky);
+  border-radius: var(--sat-radius-sm);
+  padding: 0.75rem;
+  text-align: center;
+}
+.sat-price-cell .month {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--sat-gray-600);
+  letter-spacing: 0.05em;
+}
+.sat-price-cell .price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--sat-ocean-dark);
+}
+
+/* ===== Carousel ===== */
+.sat-carousel {
+  border-radius: var(--sat-radius);
+  overflow: hidden;
+  box-shadow: var(--sat-shadow-lg);
+}
+.sat-carousel img {
+  object-fit: cover;
+  height: 450px;
+}
+@media (max-width: 768px) {
+  .sat-carousel img { height: 250px; }
+}
+
+/* ===== Map ===== */
+.sat-map {
+  border-radius: var(--sat-radius);
+  overflow: hidden;
+  box-shadow: var(--sat-shadow);
+}
+.sat-map iframe {
+  width: 100%;
+  height: 350px;
+  border: 0;
+}
+
+/* ===== Footer ===== */
+.sat-footer {
+  background: var(--sat-gray-900);
+  color: white;
+  margin-top: 3rem;
+}
+
+/* ===== Page Header ===== */
+.sat-page-header {
+  background: linear-gradient(135deg, var(--sat-ocean) 0%, #023E8A 100%);
+  color: white;
+  padding: 2.5rem 0;
+  margin-bottom: 2rem;
+}
+.sat-page-header h1,
+.sat-page-header h2,
+.sat-page-header h3 {
+  color: white;
+  margin: 0;
+}
+.sat-page-header p { opacity: 0.85; margin-bottom: 0; }
+
+/* ===== Utility ===== */
+.text-ocean { color: var(--sat-ocean) !important; }
+.bg-sand { background: var(--sat-sand) !important; }
+.bg-sky { background: var(--sat-sky) !important; }
 
 // Scaffolding
 // -------------------------

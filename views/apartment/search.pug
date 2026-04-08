@@ -9,43 +9,31 @@ block content
   - var nextDateString = nextDateObjectNew.toLocaleDateString();
   - var dateRange = todaysDateString + " - " + nextDateString
 
-  .page-header
-    h3.text-center #{title}
-    hr
+  .sat-page-header
+    h2 Search Apartments
+    p.mb-0 Find your perfect vacation rental
 
-  form.form-horizontal(action='/search-for-apartments', method='POST')
-    input(type='hidden', name='_csrf', value=_csrf)
-    .form-group.row.justify-content-center
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='numBathrooms') Number of bathrooms at least:
-      .col-sm-7
-        input.form-control(type='numBathrooms', name='numBathrooms', id='numBathrooms', value='0')
-    .form-group.row.justify-content-center
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='numBedrooms') Number of bedrooms at least *:
-      .col-sm-7
-        input.form-control(type='numBedrooms', name='numBedrooms', id='numBedrooms', value='0')
-    .form-group.row.justify-content-center
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='numBedroomsMax') Maximum number of bedrooms:
-      .col-sm-7
-        input.form-control(type='numBedroomsMax', name='numBedroomsMax', id='numBedroomsMax', value='5')
-    .form-group.row.justify-content-center
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='dateRange') Available in date range **:
-      .col-sm-7
-        input.form-control(type='dateRange', name='dateRange', id='dateRange', value=dateRange)
-    .form-group.row.justify-content-center
-      .col-sm-4
-        button.btn.btn.btn-primary(type='submit')
-          i.fa.fa-search
-          | Search Apartments
-
-    br 
-    p * Note that the number of bedrooms may not be equal to the number of beds in the unit. Each bedroom has at least one bed, but some bedrooms have more than one bed. To clear things up, read the "Additional Information" section on the unit and email the condo unit owner.
-    br 
-    p ** Note that not all unit owners update their availability on this website. A unit might actually be unavailabile even though this website indicates that they have availability because again, they might have just not updated their availability. To clear things up, email the condo unit owner.
-
-//-
-    This was to search by price for a given month
-    .form-group.row.justify-content-center
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='monthPrice') Price for month of [Month] at most [$X]
-      .col-sm-7
-        input.form-control(type='monthPrice', name='monthPrice', id='monthPrice', value='January $99999')
-//-
+  .container.py-4
+    .sat-card-static.p-4
+      form.sat-form(action='/search-for-apartments', method='POST')
+        input(type='hidden', name='_csrf', value=_csrf)
+        .row.g-3
+          .col-md-3
+            label.form-label(for='numBathrooms') Bathrooms (min)
+            input.form-control(type='number', name='numBathrooms', id='numBathrooms', value='0')
+          .col-md-3
+            label.form-label(for='numBedrooms') Bedrooms (min) *
+            input.form-control(type='number', name='numBedrooms', id='numBedrooms', value='0')
+          .col-md-3
+            label.form-label(for='numBedroomsMax') Bedrooms (max)
+            input.form-control(type='number', name='numBedroomsMax', id='numBedroomsMax', value='5')
+          .col-md-3
+            label.form-label(for='dateRange') Date Range **
+            input.form-control(type='text', name='dateRange', id='dateRange', value=dateRange)
+        .mt-3
+          button.btn.btn-ocean(type='submit')
+            i.bi.bi-search.me-1
+            | Search Apartments
+        .mt-4
+          p.text-muted.small.mb-1 * Note that the number of bedrooms may not be equal to the number of beds in the unit. Each bedroom has at least one bed, but some bedrooms have more than one bed. To clear things up, read the "Additional Information" section on the unit and email the condo unit owner.
+          p.text-muted.small.mb-0 ** Note that not all unit owners update their availability on this website. A unit might actually be unavailable even though this website indicates that they have availability because again, they might have just not updated their availability. To clear things up, email the condo unit owner.

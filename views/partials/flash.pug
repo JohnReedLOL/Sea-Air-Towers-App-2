@@ -1,18 +1,19 @@
-if messages.errors
-  .alert.alert-danger.fade.show
-    button.close(type='button', data-dismiss='alert')
-      i.fa.fa-times-circle-o
-    for error in messages.errors
-      div= error.msg
-if messages.info
-  .alert.alert-info.fade.show
-    button.close(type='button', data-dismiss='alert')
-      i.fa.fa-times-circle-o
-    for info in messages.info
-      div= info.msg
-if messages.success
-  .alert.alert-success.fade.show
-    button.close(type='button', data-dismiss='alert')
-      i.fa.fa-times-circle-o
-    for success in messages.success
-      div= success.msg
+.container.mt-3
+  if messages.errors
+    each error in messages.errors
+      .alert.alert-danger.alert-dismissible.fade.show.shadow-sm.border-0(role='alert')
+        i.bi.bi-exclamation-triangle-fill.me-2
+        span= error.msg
+        button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')
+  if messages.info
+    each info in messages.info
+      .alert.alert-info.alert-dismissible.fade.show.shadow-sm.border-0(role='alert')
+        i.bi.bi-info-circle-fill.me-2
+        span= info.msg
+        button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')
+  if messages.success
+    each success in messages.success
+      .alert.alert-success.alert-dismissible.fade.show.shadow-sm.border-0(role='alert')
+        i.bi.bi-check-circle-fill.me-2
+        span= success.msg
+        button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')

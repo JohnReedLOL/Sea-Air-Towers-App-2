@@ -1,19 +1,22 @@
 extends ../layout
 
 block content
-  .col-sm-8.offset-sm-2
-    form(method='POST')
-      legend Landlord, Reset Password
-      hr
-      input(type='hidden', name='_csrf', value=_csrf)
-      .form-group
-        p DO NOT USE THE SAME PASSWORD HERE AS YOU USE ON ANOTHER WEBSITE! We do not take responsibility if somehow someone hacks your password from this website.
-        label.col-form-label.font-weight-bold(for='password') New Password
-        input.form-control(type='password', name='password', id='password', placeholder='New password', autofocus, required)
-      .form-group
-        label.col-form-label.font-weight-bold(for='confirm') Confirm Password
-        input.form-control(type='password', name='confirm', id='confirm', placeholder='Confirm password', required)
-      .form-group
-        button.btn.btn-primary.btn-reset(type='submit')
-          i.fa.fa-keyboard-o
-          | Change Password
+  .sat-page-header
+    h2 Set New Password
+
+  .container.py-5
+    .sat-auth-card.sat-card-static
+      form.sat-form(method='POST')
+        input(type='hidden', name='_csrf', value=_csrf)
+        .mb-3
+          label.form-label(for='password') New Password
+          input.form-control(type='password', name='password', id='password', placeholder='New password', autofocus, required)
+        .mb-3
+          label.form-label(for='confirm') Confirm Password
+          input.form-control(type='password', name='confirm', id='confirm', placeholder='Confirm password', required)
+        small.text-muted.d-block.mb-3
+          i.bi.bi-info-circle.me-1
+          | Choose a unique password that you don't use on other websites.
+        button.btn.btn-ocean.w-100(type='submit')
+          i.bi.bi-lock.me-1
+          | Set New Password

@@ -9,30 +9,34 @@ block content
   - var nextDateString = nextDateObjectNew.toLocaleDateString();
   - var dateRange = todaysDateString + " - " + nextDateString
 
-  .page-header
-    h3.text-center #{title}
-    hr
+  .sat-page-header
+    h2 #{title}
 
-  form.form-horizontal(action='/account/update-availability/' + apartmentNumber, method='POST')
-    input(type='hidden', name='_csrf', value=_csrf)
-    .form-group.row.justify-content-center
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='dateRange') Book Date Range
-      .col-sm-7
-        input.form-control(type='dateRange', name='dateRange', id='dateRange', value=dateRange)
-    .form-group.row.justify-content-center
-      .col-sm-4
-        button.btn.btn.btn-primary(type='submit')
-          i.fa.fa-pencil
-          | Book Dates
-
-  form.form-horizontal(action='/account/unupdate-availability/' + apartmentNumber, method='POST')
-    input(type='hidden', name='_csrf', value=_csrf)
-    .form-group.row.justify-content-center
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='dateRange2') Unbook Date Range
-      .col-sm-7
-        input.form-control(type='dateRange2', name='dateRange2', id='dateRange2', value=dateRange)
-    .form-group.row.justify-content-center
-      .col-sm-4
-        button.btn.btn.btn-primary(type='submit')
-          i.fa.fa-pencil
-          | Unbook Dates
+  .container.py-4
+    .row.g-4
+      .col-md-6
+        .sat-card-static.p-4
+          h5.mb-3(style='color: #198754;')
+            i.bi.bi-calendar-plus.me-2
+            | Book Dates
+          form.sat-form(action='/account/update-availability/' + apartmentNumber, method='POST')
+            input(type='hidden', name='_csrf', value=_csrf)
+            .mb-3
+              label.form-label(for='dateRange') Date Range
+              input.form-control(type='text', name='dateRange', id='dateRange', value=dateRange)
+            button.btn.btn-ocean(type='submit')
+              i.bi.bi-calendar-check.me-1
+              | Book Dates
+      .col-md-6
+        .sat-card-static.p-4
+          h5.mb-3(style='color: #e07a5f;')
+            i.bi.bi-calendar-minus.me-2
+            | Unbook Dates
+          form.sat-form(action='/account/unupdate-availability/' + apartmentNumber, method='POST')
+            input(type='hidden', name='_csrf', value=_csrf)
+            .mb-3
+              label.form-label(for='dateRange2') Date Range
+              input.form-control(type='text', name='dateRange2', id='dateRange2', value=dateRange)
+            button.btn.btn-outline-ocean(type='submit')
+              i.bi.bi-calendar-x.me-1
+              | Unbook Dates
